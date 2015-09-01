@@ -23,9 +23,8 @@
 
   $.extend(HotkeyMenu.prototype, {
     _addLinkClickHandlers: function () {
-      var hotkeyPrefix = this.hotkeyPrefix;
       var $menu = this.$menu;
-      var hotkeys = this.hotkeys;
+      var _this = this;
       $menu.find('a').each(function () {
         var $a = $(this);
         var clicks = 0;
@@ -38,53 +37,67 @@
               if (clicks === 1) {
                 window.location = $a.attr('href');
               } else {
-                $menu.find('a').popover('destroy');
-                $a.popover({
-                  animation: false,
-                  placement: 'bottom',
-                  html: true,
-                  title: 'Add a Shortcut',
-                  content: '<div class="alert alert-danger hotkey-error-msg" style="margin-bottom: 10px; display: none; font-size: 12px;"></div><div class="input-group input-group-sm" style="margin-bottom: 10px;"><span class="input-group-addon" id="sizing-addon3">' + hotkeyPrefix + ' + </span>\
-                    <input type="text" class="input-sm hotkey-input" size="1" maxlength="1"></div>\
-                    <button class="confirm btn btn-xs btn-danger add-shortcut-btn">Add</button>\
-                    <button class="unconfirm btn btn-xs cancel-shortcut-btn">Cancel</button>',
-                });
-                $a.popover('show');
-                $('.cancel-shortcut-btn').click(function () {
-                  $a.popover('destroy');
-                });
-                $('.add-shortcut-btn').click(function () {
-                  var sc = $('.hotkey-input').val();
-                  //a little validation
-                  var errorMsg;
-                  if (sc.length === 0) {
-                    errorMsg = 'Please enter a Shortcut value.';
-                  } else if (sc.length > 1) {
-                    errorMsg = 'Shortcut must be one character long.';
-                  } else {
-                    hotkeys.forEach(function (hk) {
-                      if (hk.shortcut === sc) {
-                        errorMsg = 'Shortcut already exists for ' + hk.name + '.';
-                      }
-                    });
-                  }
-                  if (errorMsg) {
-                    $('.hotkey-error-msg').text(errorMsg).show();
-                    $('.hotkey-input').focus();
-                    return;
-                  }
-                  hotkeys.push({name: $a.text(), shortcut: sc});
-                  $a.popover('destroy');
-                });
+                _this._promptForShortcut($a);
               }
               clicks = 0;
-            }.bind(this), 300);
+            }, 300);
           }
         });
       });
     },
+    _promptForShortcut: function ($a) {
+      //destroy any other shortcut prompts
+      this.$menu.find('a').popover('destroy');
+      $a.popover({
+        animation: false,
+        placement: 'bottom',
+        html: true,
+        title: 'Add a Shortcut',
+        content: '<div class="alert alert-danger hotkey-error-msg" style="margin-bottom: 10px; display: none; font-size: 12px;"></div><div class="input-group input-group-sm" style="margin-bottom: 10px;"><span class="input-group-addon" id="sizing-addon3">' + this.hotkeyPrefix + ' + </span>\
+          <input type="text" class="input-sm hotkey-input" size="1" maxlength="1"></div>\
+          <button class="confirm btn btn-xs btn-danger add-shortcut-btn">Add</button>\
+          <button class="unconfirm btn btn-xs cancel-shortcut-btn">Cancel</button>',
+      });
+      $a.popover('show');
+
+      var hk = this.getHotkey($a.clone().children().remove().end().text());
+      if (hk) {
+        $('.hotkey-input').val(hk.shortcut);
+      }
+      $('.cancel-shortcut-btn').click(function () {
+        $a.popover('destroy');
+      });
+      $('.add-shortcut-btn').click(function () {
+        var sc = $('.hotkey-input').val();
+        //a little validation
+        var errorMsg;
+        if (sc.length === 0) {
+          errorMsg = 'Please enter a Shortcut value.';
+        } else if (sc.length > 1) {
+          errorMsg = 'Shortcut must be one character long.';
+        } else {
+          this.hotkeys.forEach(function (hk) {
+            if (hk.shortcut === sc) {
+              errorMsg = 'Shortcut already exists for ' + hk.name + '.';
+            }
+          });
+        }
+        if (errorMsg) {
+          $('.hotkey-error-msg').text(errorMsg).show();
+          $('.hotkey-input').focus();
+          return;
+        }
+        this._addHotkey({name: $a.clone().children().remove().end().text(), shortcut: sc});
+        $a.popover('destroy');
+      }.bind(this));
+    },
+    _addHotkey: function (hotkey) {
+      this.hotkeys.push(hotkey);
+      window.localStorage.setItem('menuHotkeys', JSON.stringify(this.hotkeys));
+      this._bindHotkey(hotkey);
+    },
     _loadMenuHotkeys: function () {
-      this.hotkeys = {};
+      this.hotkeys = [];
       var hotkeys = window.localStorage.getItem('menuHotkeys');
       if (hotkeys) {
         try {
@@ -96,16 +109,25 @@
           return;
         }
         if (Array.isArray(this.hotkeys)) {
-          this.hotkeys.forEach(this._setHotkey, this);
+          this.hotkeys.forEach(this._bindHotkey, this);
         }
 
       }
     },
-    _setHotkey: function (hotkey) {
+    getHotkey: function (name) {
+      for (var i = 0; i < this.hotkeys.length; ++i) {
+        var hk = this.hotkeys[i];
+        if (hk.name === name) {
+          return hk;
+        }
+      }
+    },
+    _bindHotkey: function (hotkey) {
       //find menu item with text
-      var menuItemLink = this.$menu.filter(function () {
-         return $(this).text() === hotkey.name;
+      var menuItemLink = this.$menu.find('a').filter(function () {
+         return $(this).clone().children().remove().end().text() === hotkey.name;
       });
+      menuItemLink.remove('sup').append($('<sup>').text(hotkey.shortcut));
       var keyCombination = this.hotkeyPrefix + '+' + hotkey.shortcut;
       $(document).bind('keydown', keyCombination, function () {
         menuItemLink.click();

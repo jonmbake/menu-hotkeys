@@ -31,11 +31,9 @@ _(Nothing yet)_
 
 ## To Do
 - Fix running tests from command line
-- Add bootstrap popover dependency (both CSS/JS)
-- Popover input should be populated with existing shortcut
-- Add indicator to menu item text when a shortcut is present
 - Entering keyboard shortcut should navigate to page !!major feature
 - Add ability to delete shortcut
+- Add ability to update shortcut
 - Detect side or top menu and place the pop over accordingly
 - Refactor code (right now it is a hack job)
 - Create a better demo (maybe 2- one for top menu, one for side)

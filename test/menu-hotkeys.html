@@ -4,8 +4,8 @@
   <meta charset="utf-8">
   <title>Menu Shortcuts Test Suite</title>
   <!-- Load local jQuery. This can be overridden with a ?jquery=___ param. -->
-  <script src="../libs/jquery-loader.js"></script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js" integrity="sha256-Sk3nkD6mLTMOF0EOpNtsIry+s1CsaqQC1rVLTAy+0yc= sha512-K1qjQ+NcF2TYO/eI3M6v8EiNYZfA95pQumfvcVrTHtwQVDG+aHRqLi/ETn2uB+1JqwYqVG3LIvdm9lj6imS/pQ==" crossorigin="anonymous"></script>
+  <script src="../libs/jquery/jquery.js"></script>
+  <script src="../libs/bootstrap/bootstrap.js"></script>
   <!-- Load local QUnit. -->
   <link rel="stylesheet" href="../libs/qunit/qunit.css" media="screen">
   <script src="../libs/qunit/qunit.js"></script>
@@ -20,9 +20,9 @@
 <body>
   <div id="qunit"></div>
   <nav id="nav">
-    <a href="/home" id="home">Home</a>
-    <a href="/foo" id="foo-menu-item">Foo</a>
-    <a href="/bar">Bar</a>
+    <a href="#home" id="home">Home</a>
+    <a href="#foo" id="foo-menu-item">Foo</a>
+    <a href="#bar">Bar</a>
   </nav>
 </body>
 </html>

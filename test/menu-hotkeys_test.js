@@ -64,13 +64,30 @@
 
   asyncTest('should show/hide popover when double clicking link', function() {
     expect(2);
-    this.$homeMenuItem.click().click();
+    $('#home').click().click();
     setTimeout(function() {
-      equal(this.$homeMenuItem.next('div.popover:visible').length, 1, 'Popover is showing');
+      equal($('#home').next('div.popover:visible').length, 1, 'Popover is showing');
       $('.cancel-shortcut-btn').click();
-      equal(this.$homeMenuItem.next('div.popover:visible').length, 0, 'Popover is hidden');
+      equal($('#home').next('div.popover:visible').length, 0, 'Popover is hidden');
       start();
-    }.bind(this), 1000);
+    }, 500);
+  });
+
+  asyncTest('should display error when input is empty, same shortcut already exist or shortcut is more than one char', function() {
+    expect(3);
+    $('#foo-menu-item').click().click();
+    setTimeout(function() {
+      $('.hotkey-input').val('');
+      $('.add-shortcut-btn').click();
+      equal($('.hotkey-error-msg').text(), 'Please enter a Shortcut value.');
+      $('.hotkey-input').val('h');
+      $('.add-shortcut-btn').click();
+      equal($('.hotkey-error-msg').text(), 'Shortcut already exists for Home.');
+      $('.hotkey-input').val('foo');
+      $('.add-shortcut-btn').click();
+      equal($('.hotkey-error-msg').text(), 'Shortcut must be one character long.');
+      start();
+    }, 500);
   });
 
   asyncTest('should be able to add a shortcut (hotkey) by entering text into input', function() {
@@ -80,20 +97,32 @@
       equal($('#foo-menu-item').next('div.popover:visible').length, 1, 'Popover is showing');
       $('.hotkey-input').val('f');
       $('.add-shortcut-btn').click();
-      equal(this.$nav.data('hotkeys').hotkeys[1].name, "Foo");
-      equal(this.$nav.data('hotkeys').hotkeys[1].shortcut, "f");
+      equal($('#nav').data('hotkeys').hotkeys[1].name, "Foo");
+      equal($('#nav').data('hotkeys').hotkeys[1].shortcut, "f");
       start();
-    }.bind(this), 1000);
+    }, 500);
   });
-
+/*
+  asyncTest('should be able to edit an existing shortcut (hotkey)', function() {
+    expect(2);
+    $('#home').click().click();
+    setTimeout(function() {
+      equal($('.hotkey-input').val(), 'h');
+      $('.hotkey-input').val('o');
+      $('.add-shortcut-btn').click();
+      equal($('#nav').data('hotkeys').hotkeys[0].shortcut, "o");
+      start();
+    }, 500);
+  });
+*/
   test('should load menu items from local storage (by default)', function() {
     expect(1);
-    ok(this.$nav.data('hotkeys').hotkeys.length === 1, "There is one hotkey attached to the menu");
+    ok($('#nav').data('hotkeys').hotkeys.length === 1, "There is one hotkey attached to the menu");
   });
 
   test('should bind hotkey to document', function() {
     expect(1);
-    this.$homeMenuItem.on('click', function () {
+    $('#home').on('click', function () {
       ok(true, 'Event was fired');
     });
     triggerHotKeyBinding('keydown', 'ctrl+shift+h', 72, ['ctrl', 'shift']);
