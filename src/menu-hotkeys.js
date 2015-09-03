@@ -154,8 +154,9 @@
       var deferred = $.Deferred();
       switch(action) {
         case 'add':
-          if (this.getShortcutByHotkey(shortcut.hotkey)) {
-            deferred.reject('Shortcut already exists for ' +  shortcut.name);
+          var existingSc = this.getShortcutByHotkey(shortcut.hotkey);
+          if (existingSc) {
+            deferred.reject('Shortcut already exists for ' +  existingSc.name + '.');
             break;
           }
           this.shortcuts.push(shortcut);

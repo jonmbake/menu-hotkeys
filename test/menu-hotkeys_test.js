@@ -53,11 +53,12 @@
     setup: function() {
       this.$nav = $('#nav');
       this.$homeMenuItem = $('#home');
-      window.localStorage.setItem('MENU_SHORTCUTS', '[{"name": "Home", "shortcut": "h"}]');
+      window.localStorage.setItem('MENU_SHORTCUTS', '[{"name": "Home", "hotkey": "h"}]');
       this.$nav.menu_hotkeys();
     },
     teardown: function() {
       $(document).unbind();
+      window.localStorage.clear('MENU_SHORTCUTS');
       this.$nav.removeData('hotkeys');
     }
   });
@@ -72,7 +73,7 @@
       start();
     }, 500);
   });
-/*
+
   asyncTest('should display error when input is empty, same shortcut already exist or shortcut is more than one char', function() {
     expect(3);
     $('#foo-menu-item').click().click();
@@ -89,7 +90,7 @@
       start();
     }, 500);
   });
-*/
+
   asyncTest('should be able to add a shortcut (hotkey) by entering text into input', function() {
     expect(3);
     $('#foo-menu-item').click().click();
@@ -121,9 +122,9 @@
       ok(true, 'Event was fired');
     });
     setTimeout(function() {
-    triggerHotKeyBinding('keydown', 'ctrl+shift+h', 72, ['ctrl', 'shift']);
-    start();
-  }, 500);
+      triggerHotKeyBinding('keydown', 'ctrl+shift+h', 72, ['ctrl', 'shift']);
+      start();
+    }, 500);
   });
 
   test('is awesome', function() {
