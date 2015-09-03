@@ -6,132 +6,185 @@
  * Dependent on jQuery Hotkeys Plugin (Copyright 2010, John Resig)
  * Licensed under the MIT license.
  */
-
-(function($, console) {
+// A note on nomenclature: Shortcut is menu item and hotkey, hotkey is the key sequence 
+(function($) {
   var jQuery = $;
 
   var defaultOptions = {
     hotkeyPrefix: 'ctrl+shift'
   };
 
-  var HotkeyMenu = function ($menu, options) {
-    $.extend(this, defaultOptions, options);
-    this.$menu = $menu;
-    this._loadMenuHotkeys();
-    this._addLinkClickHandlers();
+  var HotkeyPrompt = function (menuItem) {
+    this.menuItem = menuItem;
+    this.init();
   };
 
-  $.extend(HotkeyMenu.prototype, {
-    _addLinkClickHandlers: function () {
-      var $menu = this.$menu;
-      var _this = this;
-      $menu.find('a').each(function () {
-        var $a = $(this);
-        var clicks = 0;
-        $a.on('click', function (e) {
-          e.preventDefault();
-          e.stopPropagation();
-          clicks++;
-          if (clicks === 1) {
-            setTimeout(function() {
-              if (clicks === 1) {
-                window.location = $a.attr('href');
-              } else {
-                _this._promptForShortcut($a);
-              }
-              clicks = 0;
-            }, 300);
-          }
-        });
-      });
-    },
-    _promptForShortcut: function ($a) {
-      //destroy any other shortcut prompts
-      this.$menu.find('a').popover('destroy');
-      $a.popover({
+  $.extend(HotkeyPrompt.prototype, {
+    init: function () {
+      this.menuItem.$a.popover({
         animation: false,
         placement: 'bottom',
         html: true,
         title: 'Add a Shortcut',
-        content: '<div class="alert alert-danger hotkey-error-msg" style="margin-bottom: 10px; display: none; font-size: 12px;"></div><div class="input-group input-group-sm" style="margin-bottom: 10px;"><span class="input-group-addon" id="sizing-addon3">' + this.hotkeyPrefix + ' + </span>\
+        content: '<div class="alert alert-danger hotkey-error-msg" style="margin-bottom: 10px; display: none; font-size: 12px;"></div><div class="input-group input-group-sm" style="margin-bottom: 10px;"><span class="input-group-addon" id="sizing-addon3">' + this.menuItem.hotkeyPrefix + ' + </span>\
           <input type="text" class="input-sm hotkey-input" size="1" maxlength="1"></div>\
           <button class="confirm btn btn-xs btn-danger add-shortcut-btn">Add</button>\
           <button class="unconfirm btn btn-xs cancel-shortcut-btn">Cancel</button>',
       });
+    },
+    open: function () {
+      var menuItem = this.menuItem;
+      var $a = this.menuItem.$a;
       $a.popover('show');
 
-      var hk = this.getHotkey($a.clone().children().remove().end().text());
-      if (hk) {
-        $('.hotkey-input').val(hk.shortcut);
+      if (this.menuItem.hotkey) {
+        $('.hotkey-input').val(this.menuItem.hotkey);
       }
       $('.cancel-shortcut-btn').click(function () {
         $a.popover('destroy');
       });
       $('.add-shortcut-btn').click(function () {
-        var sc = $('.hotkey-input').val();
+        var hotkey = $('.hotkey-input').val();
         //a little validation
         var errorMsg;
-        if (sc.length === 0) {
+        if (hotkey.length === 0) {
           errorMsg = 'Please enter a Shortcut value.';
-        } else if (sc.length > 1) {
+        } else if (hotkey.length > 1) {
           errorMsg = 'Shortcut must be one character long.';
-        } else {
-          this.hotkeys.forEach(function (hk) {
-            if (hk.shortcut === sc) {
-              errorMsg = 'Shortcut already exists for ' + hk.name + '.';
-            }
-          });
         }
         if (errorMsg) {
           $('.hotkey-error-msg').text(errorMsg).show();
           $('.hotkey-input').focus();
           return;
         }
-        this._addHotkey({name: $a.clone().children().remove().end().text(), shortcut: sc});
-        $a.popover('destroy');
+        menuItem.hotkeyUpdater('add', {name: menuItem.name, hotkey: hotkey}).then(
+          //success
+          function (shortCut) {
+            menuItem.updateHotkey(shortCut.hotkey);
+            $a.popover('destroy');
+          },
+          //error
+          function (errorMsg) {
+            $('.hotkey-error-msg').text(errorMsg).show();
+            $('.hotkey-input').focus();
+          }
+        );
+      });   
+    }
+  });
+  /**
+   * A Menu Item managed by {@link HotkeyMenu}.  Can be either a 
+   * @param {[type]} $a     [description]
+   * @param {[type]} prefix [description]
+   * @param {[type]} hotkey [description]
+   */
+  var MenuItem = function ($a, hotkeyUpdater, hotkeyPrefix, hotkey) {
+    $.extend(this, { $a: $a, hotkeyUpdater: hotkeyUpdater, hotkeyPrefix: hotkeyPrefix});
+    this.name = $a.text();
+    this.updateHotkey(hotkey);
+    this.addClickHandler();
+  };
+
+  $.extend(MenuItem.prototype, {
+    addClickHandler: function () {
+      //would like to use Function.prototype.bind, but Phantomjs barfs when running tests :(
+      var _this = this;
+      var $a = this.$a;
+      var clicks = 0;
+      $a.on('click', function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        clicks++;
+        if (clicks === 1) {
+          setTimeout(function() {
+            if (clicks === 1) {
+              window.location = $a.attr('href');
+            } else {
+              new HotkeyPrompt(_this).open();
+            }
+            clicks = 0;
+          }, 300);
+        }
       }.bind(this));
     },
-    _addHotkey: function (hotkey) {
-      this.hotkeys.push(hotkey);
-      window.localStorage.setItem('menuHotkeys', JSON.stringify(this.hotkeys));
-      this._bindHotkey(hotkey);
-    },
-    _loadMenuHotkeys: function () {
-      this.hotkeys = [];
-      var hotkeys = window.localStorage.getItem('menuHotkeys');
-      if (hotkeys) {
-        try {
-          this.hotkeys = JSON.parse(hotkeys);
-        } catch (e) {
-          if (console && console.error) {
-            console.error('Error while attempting to load menu hotkeys.  Unable to parse: ', hotkeys);
-          }
-          return;
-        }
-        if (Array.isArray(this.hotkeys)) {
-          this.hotkeys.forEach(this._bindHotkey, this);
-        }
-
+    updateHotkey: function (hotkey) {
+      if (!hotkey) {
+        return;
       }
-    },
-    getHotkey: function (name) {
-      for (var i = 0; i < this.hotkeys.length; ++i) {
-        var hk = this.hotkeys[i];
-        if (hk.name === name) {
-          return hk;
-        }
+      if (this.hotkey) {
+        $(document).unbind('keydown', this.hotkeyPrefix + '+' + this.hotkey);
       }
-    },
-    _bindHotkey: function (hotkey) {
-      //find menu item with text
-      var menuItemLink = this.$menu.find('a').filter(function () {
-         return $(this).clone().children().remove().end().text() === hotkey.name;
-      });
-      menuItemLink.remove('sup').append($('<sup>').text(hotkey.shortcut));
-      var keyCombination = this.hotkeyPrefix + '+' + hotkey.shortcut;
+      this.hotkey = hotkey;
+      this.$a.remove('sup').append($('<sup>').text(hotkey));
+      var keyCombination = this.hotkeyPrefix + '+' + hotkey;
+      
       $(document).bind('keydown', keyCombination, function () {
-        menuItemLink.click();
+        this.$a.click();
+      }.bind(this));
+    }
+  });
+
+
+  var HotkeyMenu = function ($menu, options) {
+    $.extend(this, defaultOptions, options);
+    this.$menu = $menu;
+
+    var items = this.menuItems = [];
+    var hotkeyPrefix = this.hotkeyPrefix;
+    var hotkeyUpdater = this.updateShortcut.bind(this);
+
+    this.loadSavedShortcuts().then(function (shortcuts) {
+      $menu.find('a').each(function () {
+        var $a = $(this);
+        for (var i = 0; i < shortcuts.length; ++i) {
+          var sc = shortcuts[i];
+          if (sc.name === $a.text()) {
+            items.push(new MenuItem($a, hotkeyUpdater, hotkeyPrefix, sc.hotkey));
+            return;
+          }
+        }
+        items.push(new MenuItem($a, hotkeyUpdater, hotkeyPrefix));
       });
+    });
+  };
+
+  $.extend(HotkeyMenu.prototype, {
+    LOCAL_STORAGE_ITEM_NAME: 'MENU_SHORTCUTS',
+    updateShortcut: function (action, shortcut) {
+      var deferred = $.Deferred();
+      switch(action) {
+        case 'add':
+          if (this.getShortcutByHotkey(shortcut.hotkey)) {
+            deferred.reject('Shortcut already exists for ' +  shortcut.name);
+            break;
+          }
+          this.shortcuts.push(shortcut);
+          window.localStorage.setItem(this.LOCAL_STORAGE_ITEM_NAME, JSON.stringify(this.shortcuts));
+          deferred.resolve(shortcut);
+          break;
+      }
+      return deferred.promise();
+    },
+    loadSavedShortcuts: function () {
+      var deferred = $.Deferred();
+      this.shortcuts = [];
+      var shortcuts = window.localStorage.getItem(this.LOCAL_STORAGE_ITEM_NAME);
+      if (shortcuts) {
+        try {
+          this.shortcuts = JSON.parse(shortcuts);
+        } catch (e) {
+          return deferred.reject('Error while attempting to load menu shortcuts.  Unable to parse: ', shortcuts);
+        }
+      }
+      return deferred.resolve(this.shortcuts);
+    },
+    getShortcutByHotkey: function (hotkey) {
+      for (var i = 0; i < this.shortcuts.length; ++i) {
+        var sc = this.shortcuts[i];
+        if (sc.hotkey === hotkey) {
+          return sc;
+        }
+      }
     },
     /**
      * Add a shortcut to the menu.
@@ -367,4 +420,4 @@
       add: keyHandler
     };
   });
-}(jQuery, window.console));
+}(jQuery));

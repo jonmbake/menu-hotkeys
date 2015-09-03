@@ -53,7 +53,7 @@
     setup: function() {
       this.$nav = $('#nav');
       this.$homeMenuItem = $('#home');
-      window.localStorage.setItem('menuHotkeys', '[{"name": "Home", "shortcut": "h"}]');
+      window.localStorage.setItem('MENU_SHORTCUTS', '[{"name": "Home", "shortcut": "h"}]');
       this.$nav.menu_hotkeys();
     },
     teardown: function() {
@@ -72,7 +72,7 @@
       start();
     }, 500);
   });
-
+/*
   asyncTest('should display error when input is empty, same shortcut already exist or shortcut is more than one char', function() {
     expect(3);
     $('#foo-menu-item').click().click();
@@ -89,7 +89,7 @@
       start();
     }, 500);
   });
-
+*/
   asyncTest('should be able to add a shortcut (hotkey) by entering text into input', function() {
     expect(3);
     $('#foo-menu-item').click().click();
@@ -97,8 +97,8 @@
       equal($('#foo-menu-item').next('div.popover:visible').length, 1, 'Popover is showing');
       $('.hotkey-input').val('f');
       $('.add-shortcut-btn').click();
-      equal($('#nav').data('hotkeys').hotkeys[1].name, "Foo");
-      equal($('#nav').data('hotkeys').hotkeys[1].shortcut, "f");
+      equal($('#nav').data('hotkeys').shortcuts[1].name, "Foo");
+      equal($('#nav').data('hotkeys').shortcuts[1].hotkey, "f");
       start();
     }, 500);
   });
@@ -114,20 +114,18 @@
       start();
     }, 500);
   });
-*/
-  test('should load menu items from local storage (by default)', function() {
-    expect(1);
-    ok($('#nav').data('hotkeys').hotkeys.length === 1, "There is one hotkey attached to the menu");
-  });
 
-  test('should bind hotkey to document', function() {
+  asyncTest('should bind hotkey to document', function() {
     expect(1);
     $('#home').on('click', function () {
       ok(true, 'Event was fired');
     });
+    setTimeout(function() {
     triggerHotKeyBinding('keydown', 'ctrl+shift+h', 72, ['ctrl', 'shift']);
+    start();
+  }, 500);
   });
-/*
+
   test('is awesome', function() {
     expect(1);
     strictEqual(this.elems.menu_hotkeys().text(), 'awesome0awesome1awesome2', 'should be awesome');
