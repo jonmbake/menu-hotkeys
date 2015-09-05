@@ -53,7 +53,7 @@
     setup: function() {
       this.$nav = $('#nav');
       this.$homeMenuItem = $('#home');
-      window.localStorage.setItem('MENU_SHORTCUTS', '[{"name": "Home", "hotkey": "h"}]');
+      window.localStorage.setItem('MENU_SHORTCUTS', '{"Home": "h"}');
       this.$nav.menu_hotkeys();
     },
     teardown: function() {
@@ -65,22 +65,31 @@
 
   asyncTest('should show/hide popover when double clicking link', function() {
     expect(2);
-    $('#home').click().click();
-    setTimeout(function() {
-      equal($('#home').next('div.popover:visible').length, 1, 'Popover is showing');
-      $('.cancel-shortcut-btn').click();
-      equal($('#home').next('div.popover:visible').length, 0, 'Popover is hidden');
+    stop(1);
+    $('#home').on('inserted.bs.popover', function () {
+      ok(true, 'Popover is showing');
+      setTimeout(function() {
+        $('.cancel-shortcut-btn').click();
+        start();
+      });
+    });
+    $('#home').on('hidden.bs.popover', function () {
+      ok(true, 'Popover is hiden');
       start();
-    }, 500);
+    });
+    $('#home').click().click();
   });
-
+/*
   asyncTest('should display error when input is empty, same shortcut already exist or shortcut is more than one char', function() {
-    expect(3);
-    $('#foo-menu-item').click().click();
-    setTimeout(function() {
+    expect(1);
+      $('#foo-menu-item').on('menu-hotkey-input-error', function () {
+        equal($('.hotkey-error-msg').text(), 'Please enter a Shortcut value.');
+        start();
+      });
+      $('#foo-menu-item').click().click();
       $('.hotkey-input').val('');
       $('.add-shortcut-btn').click();
-      equal($('.hotkey-error-msg').text(), 'Please enter a Shortcut value.');
+      /*
       $('.hotkey-input').val('h');
       $('.add-shortcut-btn').click();
       equal($('.hotkey-error-msg').text(), 'Shortcut already exists for Home.');
@@ -88,22 +97,21 @@
       $('.add-shortcut-btn').click();
       equal($('.hotkey-error-msg').text(), 'Shortcut must be one character long.');
       start();
-    }, 500);
+
   });
 
   asyncTest('should be able to add a shortcut (hotkey) by entering text into input', function() {
-    expect(3);
+    expect(2);
     $('#foo-menu-item').click().click();
     setTimeout(function() {
       equal($('#foo-menu-item').next('div.popover:visible').length, 1, 'Popover is showing');
       $('.hotkey-input').val('f');
       $('.add-shortcut-btn').click();
-      equal($('#nav').data('hotkeys').shortcuts[1].name, "Foo");
-      equal($('#nav').data('hotkeys').shortcuts[1].hotkey, "f");
+      equal($('#nav').data('hotkeys').shortcuts["Foo"], "f");
       start();
-    }, 500);
+    }, 1000);
   });
-/*
+
   asyncTest('should be able to edit an existing shortcut (hotkey)', function() {
     expect(2);
     $('#home').click().click();
@@ -111,9 +119,9 @@
       equal($('.hotkey-input').val(), 'h');
       $('.hotkey-input').val('o');
       $('.add-shortcut-btn').click();
-      equal($('#nav').data('hotkeys').hotkeys[0].shortcut, "o");
+      equal($('#nav').data('hotkeys').shortcuts["Home"], "o");
       start();
-    }, 500);
+    }, 1000);
   });
 
   asyncTest('should bind hotkey to document', function() {

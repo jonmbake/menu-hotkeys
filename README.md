@@ -20,22 +20,15 @@ In your web page:
 </script>
 ```
 
-## Documentation
-_(Coming soon)_
+## Events
 
-## Examples
-_(Coming soon)_
-
-## Release History
-_(Nothing yet)_
+Event Name          | Description                                 | Arguments
+--------------------| ------------------------------------------- | ----------
 
 ## To Do
 - Fix running tests from command line
-- Entering keyboard shortcut should navigate to page !!major feature
 - Add ability to delete shortcut
-- Add ability to update shortcut
-- Detect side or top menu and place the pop over accordingly
 - Refactor code (right now it is a hack job)
-- Create a better demo (maybe 2- one for top menu, one for side)
+- Create a better demo
 - Update README
   - Add Images to describe how it works
