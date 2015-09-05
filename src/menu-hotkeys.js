@@ -104,6 +104,7 @@
           menuItem.updateHotkey(hotkey);
         }
       }.bind(this));
+      $a.trigger('hotkey-prompt-open');
     },
     validateHotkeyInput: function (hotkey) {
       if (hotkey.length === 0) {

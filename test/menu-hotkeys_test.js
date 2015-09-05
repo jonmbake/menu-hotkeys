@@ -50,89 +50,116 @@
 
   module('jQuery#menu_hotkeys', {
     // This will run before each test in this module.
-    setup: function() {
+    setup: function(assert) {
+      var done = assert.async();
       this.$nav = $('#nav');
       this.$homeMenuItem = $('#home');
       window.localStorage.setItem('MENU_SHORTCUTS', '{"Home": "h"}');
+      this.$nav.on('menu-hotkeys-loaded', done);
       this.$nav.menu_hotkeys();
     },
     teardown: function() {
-      $(document).unbind();
+      $(document).off();
+      $('#nav').off();
+      $('#nav a').off();
+      $('#nav a').popover('destroy');
       window.localStorage.clear('MENU_SHORTCUTS');
       this.$nav.removeData('hotkeys');
     }
   });
 
-  asyncTest('should show/hide popover when double clicking link', function() {
-    expect(2);
-    stop(1);
+  QUnit.test('should show/hide popover when double clicking link', function(assert) {
+    var done = assert.async();
     $('#home').on('inserted.bs.popover', function () {
       ok(true, 'Popover is showing');
       setTimeout(function() {
         $('.cancel-shortcut-btn').click();
-        start();
       });
     });
     $('#home').on('hidden.bs.popover', function () {
       ok(true, 'Popover is hiden');
-      start();
+      done();
     });
     $('#home').click().click();
   });
 /*
-  asyncTest('should display error when input is empty, same shortcut already exist or shortcut is more than one char', function() {
-    expect(1);
-      $('#foo-menu-item').on('menu-hotkey-input-error', function () {
-        equal($('.hotkey-error-msg').text(), 'Please enter a Shortcut value.');
-        start();
+  QUnit.test('should load saved shortcut', function(assert) {
+    var done = assert.async();
+    $('#home').on('hotkey-prompt-open', function () {
+      equal($('.hotkey-input').val(), 'h');
+      $('.add-shortcut-btn').click();
+      setTimeout(function () {
+        console.log('home prompt open');
+        equal($('#nav').data('hotkeys').shortcuts["Home"], "h");
+        done();
       });
-      $('#foo-menu-item').click().click();
+    });
+    $('#home').click().click();
+  });
+*/
+  QUnit.test('should display error when input is empty', function(assert) {
+    var done = assert.async();
+    $('#foo-menu-item').on('hotkey-prompt-open', function () {
       $('.hotkey-input').val('');
       $('.add-shortcut-btn').click();
-      /*
+      setTimeout(function () {
+        equal($('.hotkey-error-msg').text(), 'Please enter a Shortcut value.');
+        done();
+      });
+    });
+    $('#foo-menu-item').click().click();
+  });
+
+  QUnit.test('should display error when input is empty', function(assert) {
+    var done = assert.async();
+    $('#foo-menu-item').on('hotkey-prompt-open', function () {
       $('.hotkey-input').val('h');
       $('.add-shortcut-btn').click();
-      equal($('.hotkey-error-msg').text(), 'Shortcut already exists for Home.');
+      setTimeout(function () {
+        equal($('.hotkey-error-msg').text(), 'Shortcut already exists for Home.');
+        done();
+      });
+    });
+    $('#foo-menu-item').click().click();
+  });
+
+  QUnit.test('should display error when shortcut is longer than one char', function(assert) {
+    var done = assert.async();
+    $('#foo-menu-item').on('hotkey-prompt-open', function () {
       $('.hotkey-input').val('foo');
       $('.add-shortcut-btn').click();
-      equal($('.hotkey-error-msg').text(), 'Shortcut must be one character long.');
-      start();
-
+      setTimeout(function () {
+        equal($('.hotkey-error-msg').text(), 'Shortcut must be one character long.');
+        done();
+      });
+    });
+    $('#foo-menu-item').click().click();
   });
 
-  asyncTest('should be able to add a shortcut (hotkey) by entering text into input', function() {
-    expect(2);
-    $('#foo-menu-item').click().click();
-    setTimeout(function() {
-      equal($('#foo-menu-item').next('div.popover:visible').length, 1, 'Popover is showing');
+  QUnit.test('should be able to add a shortcut (hotkey) by entering text into input', function(assert) {
+    var done = assert.async();
+    $('#foo-menu-item').on('hotkey-prompt-open', function () {
       $('.hotkey-input').val('f');
       $('.add-shortcut-btn').click();
-      equal($('#nav').data('hotkeys').shortcuts["Foo"], "f");
-      start();
-    }, 1000);
+      setTimeout(function () {
+        equal($('#nav').data('hotkeys').shortcuts["Foo"], "f");
+        done();
+      });
+    });
+    $('#foo-menu-item').click().click();
   });
 
-  asyncTest('should be able to edit an existing shortcut (hotkey)', function() {
-    expect(2);
-    $('#home').click().click();
-    setTimeout(function() {
-      equal($('.hotkey-input').val(), 'h');
-      $('.hotkey-input').val('o');
-      $('.add-shortcut-btn').click();
-      equal($('#nav').data('hotkeys').shortcuts["Home"], "o");
-      start();
-    }, 1000);
-  });
-
-  asyncTest('should bind hotkey to document', function() {
-    expect(1);
+/*
+  QUnit.test('should bind hotkey to document', function(assert) {
+    var done = assert.async();
     $('#home').on('click', function () {
       ok(true, 'Event was fired');
+      done();
     });
-    setTimeout(function() {
+    this.$nav.on('menu-hotkeys-loaded', function () {
       triggerHotKeyBinding('keydown', 'ctrl+shift+h', 72, ['ctrl', 'shift']);
-      start();
-    }, 500);
+      done();
+    });
   });
 
   test('is awesome', function() {
