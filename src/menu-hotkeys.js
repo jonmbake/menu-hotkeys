@@ -126,6 +126,7 @@
   var MenuItem = function ($a, hotkeyDispatcher, hotkeyPrefix, hotkey) {
     $.extend(this, { $a: $a, hotkeyDispatcher: hotkeyDispatcher, hotkeyPrefix: hotkeyPrefix});
     this.name = $a.text();
+    this.linkClicker = function () { $a.click(); };
     hotkeyDispatcher.register($a, 'menu-hotkey-updated', function (shortcut) {
       if (shortcut.name === this.name) {
         this.addHotkey(shortcut.hotkey);
@@ -158,23 +159,24 @@
       }.bind(this));
     },
     updateHotkey: function (hotkey) {
-      if (!hotkey) {
+      if (!hotkey || hotkey === this.hotkey) {
         return;
       }
       if (this.hotkey) {
-        $(document).unbind('keydown', this.hotkeyPrefix + '+' + this.hotkey);
+        $(document).unbind('keydown', this.linkClicker);
       }
       this.hotkeyDispatcher.trigger('update-menu-shortcut', {name: this.name, hotkey: hotkey});
     },
     addHotkey: function (hotkey) {
+      if (!hotkey) {
+        return;
+      }
       this.hotkey = hotkey;
       this.$a.find('sup').remove();
       this.$a.append($('<sup>').text(hotkey));
       var keyCombination = this.hotkeyPrefix + '+' + hotkey;
       
-      $(document).bind('keydown', keyCombination, function () {
-        this.$a.click();
-      }.bind(this));
+      $(document).bind('keydown', keyCombination, this.linkClicker);
     }
   });
 
@@ -262,7 +264,7 @@
     }
   };
 
-  $.fn.menu_hotkeys = function(firstArg) {
+  $.fn.menuHotkeys = function(firstArg) {
     var pluginArgs = arguments;
     var isApiCall = typeof firstArg === 'string';
     var r = this.map(function () {

@@ -9,6 +9,12 @@
   <meta name="author" content="Jon Bake">
 
   <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet" integrity="sha256-MfvZlkHCEqatNoGiOXveE8FIwMzZg4W85qfrfIFBfYc= sha512-dTfge/zgoMYpP7QbHy4gWMEGsbsdZeCXz7irItjcC3sPUFtf0kuFbDz/ixG7ArTxmDjLXDmezHubeNikyKGVyQ==" crossorigin="anonymous">
+  <style type="text/css">
+  body {
+    min-height: 2000px;
+    padding-top: 70px;
+  }
+  </style>
 
   <!--[if lt IE 9]>
   <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
@@ -23,16 +29,21 @@
 	    </div>
 
 	    <ul class="nav navbar-nav">
-	        <li><a href="#1" id="link">Link</a></li>
+	        <li><a href="#about" id="about">About</a></li>
 	        <li><a href="#2" id="link2">Link2</a></li>
 	      </ul>
 	  </div>
 	</nav>
+  <div class="container">
+    <h1 id="about">About</h1>
+    <p class="lead">Mouses are the enemy of productivity.  Every moment your hand is on the mouse is a moment away from the keyboard, a moment of not being productive.  Therefore, any action that we can take to keep are hands at home, on the keyboard, will be a great productivity boast.</p>
+    <p>One of the most important features of a web page is navigation.  Websites with great navigation are easy to use and 
+  </div>
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js" integrity="sha256-Sk3nkD6mLTMOF0EOpNtsIry+s1CsaqQC1rVLTAy+0yc= sha512-K1qjQ+NcF2TYO/eI3M6v8EiNYZfA95pQumfvcVrTHtwQVDG+aHRqLi/ETn2uB+1JqwYqVG3LIvdm9lj6imS/pQ==" crossorigin="anonymous"></script>
   <script src="src/menu-hotkeys.js"></script>
   <script>
-    $('.nav').menu_hotkeys();
+    $('.nav').menuHotkeys();
   </script>
 </body>
 </html>

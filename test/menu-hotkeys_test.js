@@ -48,7 +48,7 @@
     $(document).trigger(event);
   };
 
-  module('jQuery#menu_hotkeys', {
+  module('jQuery#menuHotkeys', {
     // This will run before each test in this module.
     setup: function(assert) {
       var done = assert.async();
@@ -56,19 +56,20 @@
       this.$homeMenuItem = $('#home');
       window.localStorage.setItem('MENU_SHORTCUTS', '{"Home": "h"}');
       this.$nav.on('menu-hotkeys-loaded', done);
-      this.$nav.menu_hotkeys();
+      this.$nav.menuHotkeys();
     },
     teardown: function() {
       $(document).off();
       $('#nav').off();
-      $('#nav a').off();
       $('#nav a').popover('destroy');
+      $('#nav a').off();
+      $('sup').remove();
       window.localStorage.clear('MENU_SHORTCUTS');
       this.$nav.removeData('hotkeys');
     }
   });
 
-  QUnit.test('should show/hide popover when double clicking link', function(assert) {
+  QUnit.test('should show popover when double clicking link, hide when clicking cancel', function(assert) {
     var done = assert.async();
     $('#home').on('inserted.bs.popover', function () {
       ok(true, 'Popover is showing');
@@ -82,24 +83,15 @@
     });
     $('#home').click().click();
   });
-/*
-  QUnit.test('should load saved shortcut', function(assert) {
-    var done = assert.async();
-    $('#home').on('hotkey-prompt-open', function () {
-      equal($('.hotkey-input').val(), 'h');
-      $('.add-shortcut-btn').click();
-      setTimeout(function () {
-        console.log('home prompt open');
-        equal($('#nav').data('hotkeys').shortcuts["Home"], "h");
-        done();
-      });
-    });
-    $('#home').click().click();
+
+  QUnit.test('should add indicator to menu item with shortcut', function() {
+    equal($('#home > sup:contains("h")').length, 1, 'superscript "h" is present on Home Menu Item');
+    equal($('#foo > sup').length, 0, 'no superscript is present on Foo Menu Item');
   });
-*/
-  QUnit.test('should display error when input is empty', function(assert) {
+
+  QUnit.test('should display error when submitting empty hotkey value', function(assert) {
     var done = assert.async();
-    $('#foo-menu-item').on('hotkey-prompt-open', function () {
+    $('#foo').on('hotkey-prompt-open', function () {
       $('.hotkey-input').val('');
       $('.add-shortcut-btn').click();
       setTimeout(function () {
@@ -107,12 +99,12 @@
         done();
       });
     });
-    $('#foo-menu-item').click().click();
+    $('#foo').click().click();
   });
 
-  QUnit.test('should display error when input is empty', function(assert) {
+  QUnit.test('should display error when submitting hotkey value that already exists', function(assert) {
     var done = assert.async();
-    $('#foo-menu-item').on('hotkey-prompt-open', function () {
+    $('#foo').on('hotkey-prompt-open', function () {
       $('.hotkey-input').val('h');
       $('.add-shortcut-btn').click();
       setTimeout(function () {
@@ -120,12 +112,12 @@
         done();
       });
     });
-    $('#foo-menu-item').click().click();
+    $('#foo').click().click();
   });
 
   QUnit.test('should display error when shortcut is longer than one char', function(assert) {
     var done = assert.async();
-    $('#foo-menu-item').on('hotkey-prompt-open', function () {
+    $('#foo').on('hotkey-prompt-open', function () {
       $('.hotkey-input').val('foo');
       $('.add-shortcut-btn').click();
       setTimeout(function () {
@@ -133,12 +125,12 @@
         done();
       });
     });
-    $('#foo-menu-item').click().click();
+    $('#foo').click().click();
   });
 
   QUnit.test('should be able to add a shortcut (hotkey) by entering text into input', function(assert) {
     var done = assert.async();
-    $('#foo-menu-item').on('hotkey-prompt-open', function () {
+    $('#foo').on('hotkey-prompt-open', function () {
       $('.hotkey-input').val('f');
       $('.add-shortcut-btn').click();
       setTimeout(function () {
@@ -146,36 +138,53 @@
         done();
       });
     });
-    $('#foo-menu-item').click().click();
+    $('#foo').click().click();
   });
 
-/*
   QUnit.test('should bind hotkey to document', function(assert) {
     var done = assert.async();
     $('#home').on('click', function () {
-      ok(true, 'Event was fired');
+      ok(true, 'Home was clicked by hotkey');
       done();
     });
-    this.$nav.on('menu-hotkeys-loaded', function () {
-      triggerHotKeyBinding('keydown', 'ctrl+shift+h', 72, ['ctrl', 'shift']);
-      done();
+    triggerHotKeyBinding('keydown', 'ctrl+shift+h', 72, ['ctrl', 'shift']);
+  });
+
+  QUnit.test('should be able to update existing shortcut which unbinds hotkey', function(assert) {
+    var done = assert.async();
+    $('#home').on('hotkey-prompt-open', function () {
+      equal($('.hotkey-input').val(), 'h');
+      $('.hotkey-input').val('o');
+      $('.add-shortcut-btn').click();
+      setTimeout(function () {
+        equal($('#nav').data('hotkeys').shortcuts["Home"], "o");
+        triggerHotKeyBinding('keydown', 'ctrl+shift+h', 72, ['ctrl', 'shift']);
+        setTimeout(function () {
+          done();
+        });
+      });
+    });
+    $('#home').click().click();
+    $('#home').one('click', function () {
+      ok(false, 'Home was clicked with old hotkey');
     });
   });
 
+/*
   test('is awesome', function() {
     expect(1);
-    strictEqual(this.elems.menu_hotkeys().text(), 'awesome0awesome1awesome2', 'should be awesome');
+    strictEqual(this.elems.menuHotkeys().text(), 'awesome0awesome1awesome2', 'should be awesome');
   });
 
-  module('jQuery.menu_hotkeys');
+  module('jQuery.menuHotkeys');
 
   test('is awesome', function() {
     expect(2);
-    strictEqual($.menu_hotkeys(), 'awesome.', 'should be awesome');
-    strictEqual($.menu_hotkeys({punctuation: '!'}), 'awesome!', 'should be thoroughly awesome');
+    strictEqual($.menuHotkeys(), 'awesome.', 'should be awesome');
+    strictEqual($.menuHotkeys({punctuation: '!'}), 'awesome!', 'should be thoroughly awesome');
   });
 
-  module(':menu_hotkeys selector', {
+  module(':menuHotkeys selector', {
     // This will run before each test in this module.
     setup: function() {
       this.elems = $('#qunit-fixture').children();
@@ -185,7 +194,7 @@
   test('is awesome', function() {
     expect(1);
     // Use deepEqual & .get() when comparing jQuery objects.
-    deepEqual(this.elems.filter(':menu_hotkeys').get(), this.elems.last().get(), 'knows awesome when it sees it');
+    deepEqual(this.elems.filter(':menuHotkeys').get(), this.elems.last().get(), 'knows awesome when it sees it');
   });
 */
 }(jQuery));

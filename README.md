@@ -16,7 +16,7 @@ In your web page:
 <script src="jquery.js"></script>
 <script src="dist/menu-hotkeys.min.js"></script>
 <script>
-  $('.nav').menu_hotkeys();
+  $('.nav').menuHotkeys();
 </script>
 ```
 
@@ -26,9 +26,13 @@ Event Name          | Description                                 | Arguments
 --------------------| ------------------------------------------- | ----------
 
 ## To Do
-- Fix running tests from command line
-- Add ability to delete shortcut
-- Refactor code (right now it is a hack job)
+
+- Support url for loading/saving hotkeys
+- Document Code
 - Create a better demo
 - Update README
   - Add Images to describe how it works
+  - Describe Options
+  - Describe Events
+- Should only attach to first link under nav
+- Add ability to delete shortcut
