@@ -84,7 +84,7 @@
         animation: false,
         placement: 'bottom',
         html: true,
-        title: 'Add a Shortcut',
+        title: 'Add a Hotkey',
         content: '<div class="alert alert-danger hotkey-error-msg" style="margin-bottom: 10px; display: none; font-size: 12px;"></div><div class="input-group input-group-sm" style="margin-bottom: 10px;"><span class="input-group-addon" id="sizing-addon3">' + this.menuItem.hotkeyPrefix + ' + </span>\
           <input type="text" class="input-sm hotkey-input" size="1" maxlength="1"></div>\
           <button class="confirm btn btn-xs btn-danger add-shortcut-btn">Add</button>\
@@ -213,22 +213,45 @@
         this.dispatcher.trigger('menu-hotkey-input-error', 'Shortcut already exists for ' +  existing + '.');
         return;
       }
-      this.shortcuts[shortcut.name] = shortcut.hotkey;
-      window.localStorage.setItem(this.LOCAL_STORAGE_ITEM_NAME, JSON.stringify(this.shortcuts));
-      this.dispatcher.trigger('menu-hotkey-updated', shortcut);
+      if (this.menuHotkeyUrl) {
+         $.ajax({
+          dataType: "json",
+          method: "PUT",
+          url: this.menuHotkeyUrl + '/' + encodeURI(shortcut.name),
+          data: shortcut,
+          success: function () {
+            this.shortcuts[shortcut.name] = shortcut.hotkey;
+            this.dispatcher.trigger('menu-hotkey-updated', shortcut);
+          }.bind(this)
+        });
+      } else {
+        this.shortcuts[shortcut.name] = shortcut.hotkey;
+        window.localStorage.setItem(this.LOCAL_STORAGE_ITEM_NAME, JSON.stringify(this.shortcuts));
+        this.dispatcher.trigger('menu-hotkey-updated', shortcut);
+      }
     },
     loadSavedShortcuts: function () {
-      var deferred = $.Deferred();
       this.shortcuts = {};
-      var shortcuts = window.localStorage.getItem(this.LOCAL_STORAGE_ITEM_NAME);
-      if (shortcuts) {
-        try {
-          this.shortcuts = JSON.parse(shortcuts);
-        } catch (e) {
-          return deferred.reject('Error while attempting to load menu shortcuts.  Unable to parse: ', shortcuts);
+      if (this.menuHotkeyUrl) {
+        return $.ajax({
+          dataType: "json",
+          url: this.menuHotkeyUrl,
+          success: function (data) {
+            this.shortcuts = data;
+          }.bind(this)
+        });
+      } else {
+        var deferred = $.Deferred();
+        var shortcuts = window.localStorage.getItem(this.LOCAL_STORAGE_ITEM_NAME);
+        if (shortcuts) {
+          try {
+            this.shortcuts = JSON.parse(shortcuts);
+          } catch (e) {
+            return deferred.reject('Error while attempting to load menu shortcuts.  Unable to parse: ', shortcuts);
+          }
         }
+        return deferred.resolve(this.shortcuts);
       }
-      return deferred.resolve(this.shortcuts);
     },
     getNameForHotkey: function (hotkey) {
       for (var sc in this.shortcuts) {

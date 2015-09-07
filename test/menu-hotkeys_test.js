@@ -48,7 +48,7 @@
     $(document).trigger(event);
   };
 
-  module('jQuery#menuHotkeys', {
+  module('jQuery#menuHotkeys base functionality', {
     // This will run before each test in this module.
     setup: function(assert) {
       var done = assert.async();
@@ -170,31 +170,44 @@
     });
   });
 
-/*
-  test('is awesome', function() {
-    expect(1);
-    strictEqual(this.elems.menuHotkeys().text(), 'awesome0awesome1awesome2', 'should be awesome');
+  module('jQuery#menuHotkeys non-default options');
+
+  QUnit.test('should make a request to get saved menu items', function(assert) {
+    var done = assert.async();
+    $.ajax = function(options) {
+      var deferred = $.Deferred();
+      var resp = {"Home": "h"};
+      equal(options.url, "/menu-hotkeys");
+      options.success(resp);
+      return deferred.resolve(resp);
+    };
+    $('#nav').on('menu-hotkeys-loaded', function () {
+      setTimeout(function () {
+        equal($('#nav').data('hotkeys').shortcuts["Home"], "h");
+        done();
+      });
+    });
+    $('#nav').menuHotkeys({menuHotkeyUrl: '/menu-hotkeys'});
   });
 
-  module('jQuery.menuHotkeys');
-
-  test('is awesome', function() {
-    expect(2);
-    strictEqual($.menuHotkeys(), 'awesome.', 'should be awesome');
-    strictEqual($.menuHotkeys({punctuation: '!'}), 'awesome!', 'should be thoroughly awesome');
+  QUnit.test('should put to update url menu item', function(assert) {
+    var done = assert.async();
+    $.ajax = function(options) {
+      var deferred = $.Deferred();
+      var resp = {"Home": "h"};
+      options.success(resp);
+      return deferred.resolve(resp);
+    };
+    $('#nav').on('menu-hotkeys-loaded', function () {
+      $.ajax = function(options) {
+        equal(options.method, "PUT");
+        equal(options.url, "/menu-hotkeys/Home");
+        done();
+      };
+      setTimeout(function () {
+        $('#nav').data('hotkeys').updateShortcut({name: "Home", hotkey: "o"});
+      });
+    });
+    $('#nav').menuHotkeys({menuHotkeyUrl: '/menu-hotkeys'});
   });
-
-  module(':menuHotkeys selector', {
-    // This will run before each test in this module.
-    setup: function() {
-      this.elems = $('#qunit-fixture').children();
-    }
-  });
-
-  test('is awesome', function() {
-    expect(1);
-    // Use deepEqual & .get() when comparing jQuery objects.
-    deepEqual(this.elems.filter(':menuHotkeys').get(), this.elems.last().get(), 'knows awesome when it sees it');
-  });
-*/
 }(jQuery));

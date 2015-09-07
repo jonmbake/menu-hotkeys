@@ -1,8 +1,12 @@
-**Note: This is a work in process.  It is not completed yet!**
-
 # Menu Hotkeys
 
-Quickly add keyboard hotkeys (keyboard shortcuts) to HTML menu items.  Dependent on [jQuery Hotkeys](https://github.com/jeresig/jquery.hotkeys).
+Quickly add keyboard hotkeys (shortcuts) to HTML menu items.  Dependent on [jQuery Hotkeys](https://github.com/jeresig/jquery.hotkeys).
+
+## How it Works
+
+### Double Click Menu Item to Add a Hotkey
+
+
 
 ## Getting Started
 Download the [production version][min] or the [development version][max].
@@ -27,7 +31,6 @@ Event Name          | Description                                 | Arguments
 
 ## To Do
 
-- Support url for loading/saving hotkeys
 - Document Code
 - Create a better demo
 - Update README
