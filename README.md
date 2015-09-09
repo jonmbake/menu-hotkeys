@@ -10,25 +10,19 @@ Quickly add hotkeys (keyboard shortcuts) to HTML menu items.
 
 ![Hotkey Prompt](https://raw.githubusercontent.com/jonmbake/screenshots/master/menu-hotkeys/hotkeys_dbl_click.png)
 
-*Enter your hotkey.*
-
-
+*Enter your hotkey.*&nbsp;&nbsp;&nbsp;
 
 ### 2) Click *Add* to Add the Hotkey to the Menu Item
 
 ![Hotkey Indicator](https://raw.githubusercontent.com/jonmbake/screenshots/master/menu-hotkeys/hotkeys_indicator.png)
 
-*After clicking the Add Button, the Hotkey will be added and an Indicator will appear.*
-
-
+*After clicking the Add Button, the Hotkey will be added and an Indicator will appear.*&nbsp;&nbsp;&nbsp;
 
 ### 3) Typing the Keyboard Shortcut Will Now Navigate to the Page
 
 ![Typing Shortcut](https://raw.githubusercontent.com/jonmbake/screenshots/master/menu-hotkeys/hotkeys_keyboard.png)
 
-![Typing Shortcut](https://raw.githubusercontent.com/jonmbake/screenshots/master/menu-hotkeys/hotkeys_nav.png)
-
-
+![Typing Shortcut](https://raw.githubusercontent.com/jonmbake/screenshots/master/menu-hotkeys/hotkeys_nav.png)&nbsp;&nbsp;&nbsp;
 
 ## Dependencies
 
