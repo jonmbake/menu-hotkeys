@@ -2,27 +2,27 @@
 
 Quickly add hotkeys (keyboard shortcuts) to HTML menu items.
 
+**[Demo](http://jonmbake.github.io/menu-hotkeys/demo.html)**
+
 ## How it Works
 
 ### 1) Double Click a Menu Item to Add a Hotkey
 
-*Enter your hotkey.*
-
 ![Hotkey Prompt](https://raw.githubusercontent.com/jonmbake/screenshots/master/menu-hotkeys/hotkeys_dbl_click.png)
+
+*Enter your hotkey.*
 
 ### 2) Click to Add the Hotkey to the Menu Item
 
-*After clicking the Add Button, the Hotkey Indicator will appear.*
-
 ![Hotkey Indicator](https://raw.githubusercontent.com/jonmbake/screenshots/master/menu-hotkeys/hotkeys_indicator.png)
+
+*After clicking the Add Button, the Hotkey will be added and an Indicator will appear.*
 
 ### 2) Typing the Keyboard Shortcut Will Now Navigate to the Page
 
 ![Typing Shortcut](https://raw.githubusercontent.com/jonmbake/screenshots/master/menu-hotkeys/hotkeys_keyboard.png)
 
 ![Typing Shortcut](https://raw.githubusercontent.com/jonmbake/screenshots/master/menu-hotkeys/hotkeys_nav.png)
-
-## [Demo](http://jonmbake.github.io/menu-hotkeys/demo.html)
 
 ## Dependencies
 
