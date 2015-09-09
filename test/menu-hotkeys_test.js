@@ -91,7 +91,7 @@
 
   QUnit.test('should display error when submitting empty hotkey value', function(assert) {
     var done = assert.async();
-    $('#foo').on('hotkey-prompt-open', function () {
+    $('#foo').on('menu-hotkey-input-open', function () {
       $('.hotkey-input').val('');
       $('.add-shortcut-btn').click();
       setTimeout(function () {
@@ -104,7 +104,7 @@
 
   QUnit.test('should display error when submitting hotkey value that already exists', function(assert) {
     var done = assert.async();
-    $('#foo').on('hotkey-prompt-open', function () {
+    $('#foo').on('menu-hotkey-input-open', function () {
       $('.hotkey-input').val('h');
       $('.add-shortcut-btn').click();
       setTimeout(function () {
@@ -117,7 +117,7 @@
 
   QUnit.test('should display error when shortcut is longer than one char', function(assert) {
     var done = assert.async();
-    $('#foo').on('hotkey-prompt-open', function () {
+    $('#foo').on('menu-hotkey-input-open', function () {
       $('.hotkey-input').val('foo');
       $('.add-shortcut-btn').click();
       setTimeout(function () {
@@ -130,7 +130,7 @@
 
   QUnit.test('should be able to add a shortcut (hotkey) by entering text into input', function(assert) {
     var done = assert.async();
-    $('#foo').on('hotkey-prompt-open', function () {
+    $('#foo').on('menu-hotkey-input-open', function () {
       $('.hotkey-input').val('f');
       $('.add-shortcut-btn').click();
       setTimeout(function () {
@@ -152,7 +152,7 @@
 
   QUnit.test('should be able to update existing shortcut which unbinds hotkey', function(assert) {
     var done = assert.async();
-    $('#home').on('hotkey-prompt-open', function () {
+    $('#home').on('menu-hotkey-input-open', function () {
       equal($('.hotkey-input').val(), 'h');
       $('.hotkey-input').val('o');
       $('.add-shortcut-btn').click();

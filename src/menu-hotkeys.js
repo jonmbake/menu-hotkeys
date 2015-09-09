@@ -70,6 +70,7 @@
       $('.hotkey-input').focus();
     });
     this.menuItem.hotkeyDispatcher.register($a, 'menu-hotkey-input-close', this.destroy.bind(this));
+    this.menuItem.hotkeyDispatcher.register($a, 'menu-hotkey-input-open');
   };
 
   $.extend(HotkeyPrompt.prototype, {
@@ -85,7 +86,7 @@
         placement: 'bottom',
         html: true,
         title: 'Add a Hotkey',
-        content: '<div class="alert alert-danger hotkey-error-msg" style="margin-bottom: 10px; display: none; font-size: 12px;"></div><div class="input-group input-group-sm" style="margin-bottom: 10px;"><span class="input-group-addon" id="sizing-addon3">' + this.menuItem.hotkeyPrefix + ' + </span>\
+        content: '<div class="alert alert-danger hotkey-error-msg" style="margin-bottom: 10px; display: none; font-size: 12px;"></div><div class="input-group input-group-sm" style="margin-bottom: 10px;"><span class="input-group-addon" id="sizing-addon3">' + this.menuItem.hotkeyPrefix + '+</span>\
           <input type="text" class="input-sm hotkey-input" size="1" maxlength="1"></div>\
           <button class="confirm btn btn-xs btn-danger add-shortcut-btn">Add</button>\
           <button class="unconfirm btn btn-xs cancel-shortcut-btn">Cancel</button>',
@@ -104,6 +105,7 @@
           menuItem.updateHotkey(hotkey);
         }
       }.bind(this));
+      this.menuItem.hotkeyDispatcher.trigger('menu-hotkey-input-open');
       $a.trigger('hotkey-prompt-open');
     },
     validateHotkeyInput: function (hotkey) {
@@ -188,7 +190,7 @@
     var hotkeyPrefix = this.hotkeyPrefix;
     var dispatcher = this.dispatcher = new Dispatcher();
     dispatcher.register($menu, 'update-menu-shortcut', this.updateShortcut.bind(this));
-    dispatcher.register($menu, 'menu-hotkey-input-error');
+    dispatcher.register($menu, ['menu-hotkey-input-open', 'menu-hotkey-input-close', 'menu-hotkey-input-error']);
 
     this.loadSavedShortcuts().then(function (shortcuts) {
       $menu.find('a').each(function () {
@@ -201,7 +203,7 @@
         }
         items.push(new MenuItem($a, dispatcher, hotkeyPrefix));
       });
-      $menu.trigger('menu-hotkeys-loaded');
+      $menu.trigger('menu-hotkeys-loaded', shortcuts);
     });
   };
 
