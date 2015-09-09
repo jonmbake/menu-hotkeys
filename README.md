@@ -12,17 +12,23 @@ Quickly add hotkeys (keyboard shortcuts) to HTML menu items.
 
 *Enter your hotkey.*
 
+
+
 ### 2) Click *Add* to Add the Hotkey to the Menu Item
 
 ![Hotkey Indicator](https://raw.githubusercontent.com/jonmbake/screenshots/master/menu-hotkeys/hotkeys_indicator.png)
 
 *After clicking the Add Button, the Hotkey will be added and an Indicator will appear.*
 
+
+
 ### 3) Typing the Keyboard Shortcut Will Now Navigate to the Page
 
 ![Typing Shortcut](https://raw.githubusercontent.com/jonmbake/screenshots/master/menu-hotkeys/hotkeys_keyboard.png)
 
 ![Typing Shortcut](https://raw.githubusercontent.com/jonmbake/screenshots/master/menu-hotkeys/hotkeys_nav.png)
+
+
 
 ## Dependencies
 
