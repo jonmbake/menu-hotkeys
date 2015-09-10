@@ -1,0 +1,182 @@
+<!doctype html>
+
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+
+  <title>Menu Hotkeys Demo</title>
+  <meta name="description" content="Demo of Menu Hotkeys">
+  <meta name="author" content="Jon Bake">
+
+  <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet" integrity="sha256-MfvZlkHCEqatNoGiOXveE8FIwMzZg4W85qfrfIFBfYc= sha512-dTfge/zgoMYpP7QbHy4gWMEGsbsdZeCXz7irItjcC3sPUFtf0kuFbDz/ixG7ArTxmDjLXDmezHubeNikyKGVyQ==" crossorigin="anonymous">
+  <style type="text/css">
+  body {
+    min-height: 2000px;
+    padding-top: 100px;
+  }
+  .container {
+    font-size: 17px;
+  }
+  .section {
+    margin-bottom: 50px;
+  }
+  </style>
+
+  <!--[if lt IE 9]>
+  <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+</head>
+
+<body>
+	<nav class="navbar navbar-default navbar-fixed-top">
+	  <div class="container-fluid">
+	  	<div class="navbar-header">
+	  		<a class="navbar-brand" href="#"><span class="glyphicon glyphicon-fire" aria-hidden="true" style="color: red"></span> Menu Hotkeys</a>
+	    </div>
+
+	    <ul class="nav navbar-nav">
+        <li><a href="#why">Why</a></li>
+        <li><a href="#how">How It Works</a></li>
+        <li><a href="#dependencies">Dependencies</a></li>
+        <li><a href="#getting-started">Getting Started</a></li>
+        <li><a href="#options">Options</a></li>
+        <li><a href="#events">Events</a></li>
+      </ul>
+	  </div>
+	</nav>
+  <div class="container">
+    <p class="lead">This is a demo of <a href="https://github.com/jonmbake/menu-hotkeys">Menu Hotkeys</a>.  <strong>Double click a menu item to add a hotkey to a section.</strong></p>
+    <h1 class="page-header" id="why">Why</h1>
+    <p>Menu Hotkeys is a jQuery Plugin which <strong>allows users to quickly assign hotkeys (keyboard shortcuts) to HTML menu items</strong>.  Navigation is one of the most important usability aspects of a web page.  Being able to quickly navigate to pages within a website is a huge win for users.  Menu Hotkeys is a great way to make your websites navigation more user friendly.</p>
+
+    <h1 class="page-header" id="how">How it Works</h1>
+
+    <div class="section">
+      <h2>1) Double Click a Menu Item to Add a Hotkey</h2>
+      <p><img src="https://raw.githubusercontent.com/jonmbake/screenshots/master/menu-hotkeys/hotkeys_dbl_click.png" alt="Hotkey Prompt" style="max-width:100%;"></a></p>
+      <p><em>Enter your hotkey.</em></p>
+    </div>
+
+    <div class="section">
+      <h2>2) Click <i>Add</i> to Add the Hotkey to the Menu Item</h2>
+      <p><img src="https://raw.githubusercontent.com/jonmbake/screenshots/master/menu-hotkeys/hotkeys_indicator.png" alt="Hotkey Indicator" style="max-width:100%;"></a></p>
+      <p><em>After clicking the Add Button, the Hotkey will be added and an Indicator will appear.</em></p>
+    </div>
+
+    <div class="section">
+      <h2>3) Typing the Keyboard Shortcut Will Now Navigate to the Page</h2>
+      <p><img src="https://raw.githubusercontent.com/jonmbake/screenshots/master/menu-hotkeys/hotkeys_keyboard.png" alt="Typing Shortcut" style="max-width:100%;"></a></p>
+      <p><img src="https://raw.githubusercontent.com/jonmbake/screenshots/master/menu-hotkeys/hotkeys_nav.png" alt="Typing Shortcut" style="max-width:100%;"></a></p>
+    </div>
+
+    <h1 class="page-header" id="dependencies">Dependencies</h1>
+    <ul>
+      <li><a href="https://github.com/jeresig/jquery.hotkeys">jQuery Hotkeys</a> (Included in source)</li>
+      <li><a href="https://github.com/twbs/bootstrap">Bootstrap Popover JS and CSS</a> Δ</li>
+    </ul>
+    <p>Δ Hope to remove this dependency in the near future</p>
+
+    <h1 class="page-header" id="getting-started">Getting Started</h1>
+    <p>Download the <a href="https://raw.github.com/jonmbake/menu-hotkeys/master/dist/menu-hotkeys.min.js">production version</a> or the <a href="https://raw.github.com/jonmbake/menu-hotkeys/master/dist/menu-hotkeys.js">development version</a>.</p>
+
+    <p>In your web page:</p>
+    <pre>&lt;<span class="pl-ent">script</span> <span class="pl-e">src</span>=<span class="pl-s"><span class="pl-pds">"</span>dist/menu-hotkeys.min.js<span class="pl-pds">"</span></span>&gt;&lt;/<span class="pl-ent">script</span>&gt;
+    &lt;<span class="pl-ent">script</span> <span class="pl-e">src</span>=<span class="pl-s"><span class="pl-pds">"</span>jquery.js<span class="pl-pds">"</span></span>&gt;&lt;/<span class="pl-ent">script</span>&gt;
+    &lt;<span class="pl-ent">script</span> <span class="pl-e">src</span>=<span class="pl-s"><span class="pl-pds">"</span>bootstrap-popover.js<span class="pl-pds">"</span></span>&gt;&lt;/<span class="pl-ent">script</span>&gt;
+    &lt;<span class="pl-ent">script</span> <span class="pl-e">src</span>=<span class="pl-s"><span class="pl-pds">"</span>dist/menu-hotkeys.min.js<span class="pl-pds">"</span></span>&gt;&lt;/<span class="pl-ent">script</span>&gt;
+    <span class="pl-s1">&lt;<span class="pl-ent">script</span>&gt;</span>
+    <span class="pl-s1">  $(<span class="pl-s"><span class="pl-pds">'</span>#nav<span class="pl-pds">'</span></span>).menuHotkeys();</span>
+    <span class="pl-s1">&lt;/<span class="pl-ent">script</span>&gt;</span></pre>
+
+    <p><em>Any nested links under the <em>#nav</em> will get the ability to have hotkeys assigned.  By default, shortcuts (hotkeys) are persisted to <code>window.localStorage</code>.</em></p>
+
+    <h1 class="page-header" id="options">Options</h1>
+
+    <table class="table table-striped"><thead>
+    <tr>
+    <th>Option Name</th>
+    <th>Description</th>
+    <th>Default Value</th>
+    </tr>
+    </thead><tbody>
+    <tr>
+    <td>hotkeyPrefix</td>
+    <td>Starting keyboard sequence for all hotkeys.</td>
+    <td>ctrl + shift</td>
+    </tr>
+    <tr>
+    <td>menuHotkeyUrl</td>
+    <td>URL to <em>GET</em> persisted shortcuts from and <em>PUT</em> to save</td>
+    <td><em>None</em></td>
+    </tr>
+    </tbody></table>
+
+    <p>Note: menuHotkeyUrl will <em>PUT</em> to <em>menuHotkeyUrl/{menuItemName}</em></p>
+
+    <p>Example:</p>
+
+    <pre><span class="pl-s1">&lt;<span class="pl-ent">script</span>&gt;</span>
+    <span class="pl-s1">  $(<span class="pl-s"><span class="pl-pds">'</span>#nav<span class="pl-pds">'</span></span>).menuHotkeys({</span>
+    <span class="pl-s1">    hotkeyPrefix<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>alt<span class="pl-pds">'</span></span>,</span>
+    <span class="pl-s1">    menuHotkeyUrl<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>https://localhost/menu-hotkeys<span class="pl-pds">'</span></span></span>
+    <span class="pl-s1">  });</span>
+    <span class="pl-s1">&lt;/<span class="pl-ent">script</span>&gt;</span>
+    </pre>
+
+    <h1 class="page-header" id="events">Events</h1>
+
+    <p>This is the list of events that are fired when certain actions happen:</p>
+
+    <table class="table table-striped"><thead>
+    <tr>
+    <th>Event Name</th>
+    <th>Action</th>
+    <th>Arguments</th>
+    </tr>
+    </thead><tbody>
+    <tr>
+    <td>menu-hotkeys-loaded</td>
+    <td>When the persisted hotkeys are loaded</td>
+    <td>Array of Objects with name and hotkey properties</td>
+    </tr>
+    <tr>
+    <td>menu-hotkey-input-open</td>
+    <td>When Hotkey Input Prompt opens.</td>
+    <td><em>None</em></td>
+    </tr>
+    <tr>
+    <td>menu-hotkey-input-close</td>
+    <td>When Hotkey Input Prompt closes.</td>
+    <td><em>None</em></td>
+    </tr>
+    <tr>
+    <td>menu-hotkey-input-error</td>
+    <td>When Hotkey Input Prompt has an input error.</td>
+    <td>error menu-hotkey-updated</td>
+    </tr>
+    </tbody></table>
+  </div>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js" integrity="sha256-Sk3nkD6mLTMOF0EOpNtsIry+s1CsaqQC1rVLTAy+0yc= sha512-K1qjQ+NcF2TYO/eI3M6v8EiNYZfA95pQumfvcVrTHtwQVDG+aHRqLi/ETn2uB+1JqwYqVG3LIvdm9lj6imS/pQ==" crossorigin="anonymous"></script>
+  <script src="src/menu-hotkeys.js"></script>
+  <script>
+    $('.nav').menuHotkeys();
+  </script>
+  <script>
+  $(function() {
+      $('a[href*=#]:not([href=#])').click(function() {
+        if (location.pathname.replace(/^\//,'') == this.pathname.replace(/^\//,'') && location.hostname == this.hostname) {
+          var target = $(this.hash);
+          target = target.length ? target : $('[name=' + this.hash.slice(1) +']');
+          if (target.length) {
+            $('html,body').animate({
+              scrollTop: target.offset().top - 55
+            }, 1000);
+            return false;
+          }
+        }
+      });
+    });
+  </script>
+</body>
+</html>
