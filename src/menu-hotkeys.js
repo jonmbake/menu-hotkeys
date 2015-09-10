@@ -149,7 +149,16 @@
         if (clicks === 1) {
           setTimeout(function() {
             if (clicks === 1) {
-              window.location = this.$a.attr('href');
+              //for internal links use smooth scrolling - TO DO: Create config to enable
+              var target = $(this.hash);
+              if (target.length) {
+                $('html,body').animate({
+                  scrollTop: target.offset().top - 50
+                }, 1000);
+                return false;
+              } else {
+                window.location = this.$a.attr('href');
+              }
             } else {
               //lazy load prompt
               this.hotkeyPrompt = this.hotkeyPrompt || new HotkeyPrompt(this);
