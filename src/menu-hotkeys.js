@@ -1,25 +1,50 @@
 /*
  * menu-hotkeys
+ * A jQuery Plugin to allow users to easily create hotkeys (keyboard shortcuts) to HTML menu items.
  * https://github.com/jonmbake/menu-hotkeys
  *
  * Copyright (c) 2015 Jon Bake
  * Dependent on jQuery Hotkeys Plugin (Copyright 2010, John Resig)
  * Licensed under the MIT license.
  */
-// A note on nomenclature: Shortcut is menu item and hotkey, hotkey is the key sequence
 (function($) {
   var jQuery = $;
-
+  /**
+   * Default initialization options.
+   * Other valid options are:
+   *   menuHotkeyUrl - the url to GET and PUT hotkeys to
+   * @type {Object}
+   */
   var defaultOptions = {
     hotkeyPrefix: 'ctrl+shift'
   };
-
+  /**
+   * A simple jQuery Event Dispatcher (Event Bus).  Any registered event will have every registered element notified
+   * (triggerd) when the event is triggered through the dispatcher.
+   * This allows components to remain decoupled and allows event to easily propogate up to the main element.
+   * @constructor
+   */
   var Dispatcher = function () {
-    //hash of event to elements registered
-    this.registered = {};
+    this.reset();
   };
 
   $.extend(Dispatcher.prototype, {
+    /**
+     * Clear all registered events.
+     * @return {undefined}
+     */
+    reset: function () {
+      //hash of event to elements registered
+      this.registered = {};
+    },
+    /**
+     * Register an element to one or multiple events.  Optionally provided a callback to be invoked when the event is
+     * triggered through the dispatcher.
+     * @param  {jQuqery Object}   $element - to register the event on
+     * @param  {String} or {Array}   events  - or single event to register the $element under
+     * @param  {Function} callback - optional callback to be invoked when event is triggered
+     * @return {undefined}
+     */
     register: function ($element, events, callback) {
       events = Array.isArray(events) ? events : [events];
       events.forEach(function (event) {
@@ -30,6 +55,12 @@
         }
       }, this);
     },
+    /**
+     * Unregister an element from an event.
+     * @param  {jQuqery Object}   $element - to unregister from the event
+     * @param  {String} or {Array}   events  - or single event to unregister the $element from
+     * @return {undefined}
+     */
     unregister: function ($element, events) {
       events = Array.isArray(events) ? events : [events];
       events.forEach(function (event) {
@@ -48,6 +79,11 @@
         }
       }, this);
     },
+    /**
+     * Trigger an event.
+     * @param  {String} event -
+     * @return {undefined}
+     */
     trigger: function (event) {
       var reg = this.registered[event];
       if (reg) {
@@ -61,7 +97,11 @@
       }
     }
   });
-
+  /**
+   * Hotkey Prompt.
+   * @constructor
+   * @param {MenuItem} menuItem - menu item the prompt is attached to
+   */
   var HotkeyPrompt = function (menuItem) {
     this.menuItem = menuItem;
     var $a = this.menuItem.$a;
@@ -69,19 +109,28 @@
       $('.hotkey-error-msg').text(errorMsg).show();
       $('.hotkey-input').focus();
     });
-    this.menuItem.hotkeyDispatcher.register($a, 'menu-hotkey-input-close', this.destroy.bind(this));
+    this.menuItem.hotkeyDispatcher.register($a, 'menu-hotkey-input-close', this.close.bind(this));
     this.menuItem.hotkeyDispatcher.register($a, 'menu-hotkey-input-open');
   };
 
   $.extend(HotkeyPrompt.prototype, {
-    destroy: function () {
+    /**
+     * Close the prompt
+     * @return {undefined}
+     */
+    close: function () {
       this.menuItem.$a.popover('destroy');
     },
+    /**
+     * Open the prompt.
+     * @return {undefined}
+     */
     open: function () {
-      this.menuItem.hotkeyDispatcher.trigger('menu-hotkey-input-close');
       var menuItem = this.menuItem;
-      var $a = this.menuItem.$a;
-       $a.popover({
+      var $a = menuItem.$a;
+      //close any prompts that are open
+      menuItem.hotkeyDispatcher.trigger('menu-hotkey-input-close');
+      $a.popover({
         animation: false,
         placement: 'bottom',
         html: true,
@@ -93,21 +142,28 @@
       });
       $a.popover('show');
 
-      if (this.menuItem.hotkey) {
-        $('.hotkey-input').val(this.menuItem.hotkey);
+      if (menuItem.hotkey) {
+        $('.hotkey-input').val(menuItem.hotkey);
       }
       $('.cancel-shortcut-btn').click(function () {
-        this.menuItem.hotkeyDispatcher.trigger('menu-hotkey-input-close');
-      }.bind(this));
+        menuItem.hotkeyDispatcher.trigger('menu-hotkey-input-close');
+      });
       $('.add-shortcut-btn').click(function () {
         var hotkey = $('.hotkey-input').val();
         if (this.validateHotkeyInput(hotkey)) {
-          menuItem.updateHotkey(hotkey);
+          menuItem.hotkeyDispatcher.trigger('update-menu-shortcut', {name: menuItem.name, hotkey: hotkey});
         }
       }.bind(this));
-      this.menuItem.hotkeyDispatcher.trigger('menu-hotkey-input-open');
+      menuItem.hotkeyDispatcher.trigger('menu-hotkey-input-open');
       $a.trigger('hotkey-prompt-open');
     },
+    /**
+     * Validate input and trigger 'menu-hotkey-input-error' if invalid.
+     * Checks that a value is chosen, has change and that the value is one char. long.  Additonal validation can be done by
+     * listening for 'update-menu-shortcut'.
+     * @param  {String} hotkey - hotkey text
+     * @return {boolean}        true if valid, false otherwise
+     */
     validateHotkeyInput: function (hotkey) {
       if (hotkey.length === 0) {
         this.menuItem.hotkeyDispatcher.trigger('menu-hotkey-input-error', 'Please enter a Shortcut value.');
@@ -115,15 +171,19 @@
       } else if (hotkey.length > 1) {
         this.menuItem.hotkeyDispatcher.trigger('menu-hotkey-input-error', 'Shortcut must be one character long.');
         return false;
+      } else if (hotkey === this.menuItem.hotkey) {
+        this.menuItem.hotkeyDispatcher.trigger('menu-hotkey-input-error', 'Value has not changed.');
+        return false;
       }
       return true;
     }
   });
   /**
-   * A Menu Item managed by {@link HotkeyMenu}.  Can be either a 
-   * @param {[type]} $a     [description]
-   * @param {[type]} prefix [description]
-   * @param {[type]} hotkey [description]
+   * A Menu Item managed by {@link HotkeyMenu}.
+   * @param {jQuery Object} $a - menu link element
+   * @param {Dispatcher} hotkeyDispatcher - event dispatcher
+   * @param {String} hotkeyPrefix - hot key prefix (passed in as option)
+   * @param {String} hotkey - existing hotkey
    */
   var MenuItem = function ($a, hotkeyDispatcher, hotkeyPrefix, hotkey) {
     $.extend(this, { $a: $a, hotkeyDispatcher: hotkeyDispatcher, hotkeyPrefix: hotkeyPrefix});
@@ -131,15 +191,18 @@
     this.linkClicker = function () { $a.click(); };
     hotkeyDispatcher.register($a, 'menu-hotkey-updated', function (shortcut) {
       if (shortcut.name === this.name) {
-        this.addHotkey(shortcut.hotkey);
+        this.updateHotkey(shortcut.hotkey);
         hotkeyDispatcher.trigger('menu-hotkey-input-close');
       }
     }.bind(this));
-    this.addHotkey(hotkey);
+    this.updateHotkey(hotkey);
     this.addClickHandler();
   };
 
   $.extend(MenuItem.prototype, {
+    /**
+     * Add menu item click handlers.  On double click open the prompt; on single click navigate to the page.
+     */
     addClickHandler: function () {
       var clicks = 0;
       this.$a.on('click', function (e) {
@@ -151,7 +214,7 @@
             if (clicks === 1) {
               window.location = this.$a.attr('href');
             } else {
-              //lazy load prompt
+              //lazy construct prompt
               this.hotkeyPrompt = this.hotkeyPrompt || new HotkeyPrompt(this);
               this.hotkeyPrompt.open();
             }
@@ -160,18 +223,18 @@
         }
       }.bind(this));
     },
+    /**
+     * Update hotkey with new value.
+     * Unbind hotkey, update UI and trigger 'update-menu-shortcut' event.
+     * @param {String} hotkey -
+     * @return {undefined}
+     */
     updateHotkey: function (hotkey) {
-      if (!hotkey || hotkey === this.hotkey) {
+      if (!hotkey) {
         return;
       }
       if (this.hotkey) {
         $(document).unbind('keydown', this.linkClicker);
-      }
-      this.hotkeyDispatcher.trigger('update-menu-shortcut', {name: this.name, hotkey: hotkey});
-    },
-    addHotkey: function (hotkey) {
-      if (!hotkey) {
-        return;
       }
       this.hotkey = hotkey;
       this.$a.find('sup').remove();
@@ -181,7 +244,11 @@
       $(document).bind('keydown', keyCombination, this.linkClicker);
     }
   });
-
+  /**
+   * Hotkey menu - repsponsible for setting up menu items, including loading persisted data.
+   * @param {jQuery Object} $menu   menu element - should contain links
+   * @param {object} options - options to plugin @see defaultOptions above
+   */
   var HotkeyMenu = function ($menu, options) {
     $.extend(this, defaultOptions, options);
     this.$menu = $menu;
@@ -189,7 +256,7 @@
     var items = this.menuItems = [];
     var hotkeyPrefix = this.hotkeyPrefix;
     var dispatcher = this.dispatcher = new Dispatcher();
-    dispatcher.register($menu, 'update-menu-shortcut', this.updateShortcut.bind(this));
+    dispatcher.register($menu, 'update-menu-shortcut', this.saveShortcut.bind(this));
     dispatcher.register($menu, ['menu-hotkey-input-open', 'menu-hotkey-input-close', 'menu-hotkey-input-error']);
 
     this.loadSavedShortcuts().then(function (shortcuts) {
@@ -209,7 +276,12 @@
 
   $.extend(HotkeyMenu.prototype, {
     LOCAL_STORAGE_ITEM_NAME: 'MENU_SHORTCUTS',
-    updateShortcut: function (shortcut) {
+    /**
+     * Save shortcut either in local storage or by PUTing to url if menuHotkeyUrl option is supplied.
+     * @param  {Object} shortcut - shortcut object with name and hotkey properties
+     * @return {undefined}
+     */
+    saveShortcut: function (shortcut) {
       var existing = this.getNameForHotkey(shortcut.hotkey);
       if (existing) {
         this.dispatcher.trigger('menu-hotkey-input-error', 'Shortcut already exists for ' +  existing + '.');
@@ -232,6 +304,10 @@
         this.dispatcher.trigger('menu-hotkey-updated', shortcut);
       }
     },
+    /**
+     * Load saved shorcuts from either Local Storage or url if menuHotkeyUrl option is supplied.
+     * @return {promise} - will reject if loading fails
+     */
     loadSavedShortcuts: function () {
       this.shortcuts = {};
       if (this.menuHotkeyUrl) {
@@ -255,18 +331,17 @@
         return deferred.resolve(this.shortcuts);
       }
     },
+    /**
+     * Returns Menu Item name for given hotkey.
+     * @param  {String} hotkey - hotkey name
+     * @return {Object}        Shortcut Object
+     */
     getNameForHotkey: function (hotkey) {
       for (var sc in this.shortcuts) {
         if (this.shortcuts[sc] === hotkey) {
           return sc;
         }
       }
-    },
-    /**
-     * Add a shortcut to the menu.
-     * @param {object} shortcut - to add
-     */
-    add: function (/*shortcut*/) {
     }
   });
 
@@ -289,6 +364,7 @@
     }
   };
 
+  //Register this plugin.
   $.fn.menuHotkeys = function(firstArg) {
     var pluginArgs = arguments;
     var isApiCall = typeof firstArg === 'string';
@@ -313,7 +389,7 @@
   };
 
   /*
-   * jQuery Hotkeys Plugin
+   * Everything after here is **jQuery Hotkeys Plugin** source.
    * Copyright 2010, John Resig
    */
   jQuery.hotkeys = {
