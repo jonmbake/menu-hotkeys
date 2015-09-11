@@ -154,8 +154,8 @@
           menuItem.hotkeyDispatcher.trigger('update-menu-shortcut', {name: menuItem.name, hotkey: hotkey});
         }
       }.bind(this));
+      $('.hotkey-input').focus();
       menuItem.hotkeyDispatcher.trigger('menu-hotkey-input-open');
-      $a.trigger('hotkey-prompt-open');
     },
     /**
      * Validate input and trigger 'menu-hotkey-input-error' if invalid.
@@ -214,7 +214,7 @@
             if (clicks === 1) {
               window.location = this.$a.attr('href');
             } else {
-              //lazy construct prompt
+              //lazily construct prompt
               this.hotkeyPrompt = this.hotkeyPrompt || new HotkeyPrompt(this);
               this.hotkeyPrompt.open();
             }
