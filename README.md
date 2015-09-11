@@ -86,7 +86,6 @@ menu-hotkey-input-error | When Hotkey Input Prompt has an input error. | error m
 
 ## To Do
 
-- Document Code
 - Should only attach to first link under nav
 - Add ability to "re-initialize"-- right now the menu has to be static
 - Add ability to delete shortcut

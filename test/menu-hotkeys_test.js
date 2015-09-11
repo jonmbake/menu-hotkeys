@@ -205,7 +205,7 @@
         done();
       };
       setTimeout(function () {
-        $('#nav').data('hotkeys').updateShortcut({name: "Home", hotkey: "o"});
+        $('#nav').data('hotkeys').saveShortcut({name: "Home", hotkey: "o"});
       });
     });
     $('#nav').menuHotkeys({menuHotkeyUrl: '/menu-hotkeys'});
