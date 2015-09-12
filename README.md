@@ -55,7 +55,7 @@ Any nested links under the *#nav* will get the ability to have hotkeys assigned.
 
 Option Name          | Description | Default Value
 ---------------------|------------ | -------------
-hotkeyPrefix         | Starting keyboard sequence for all hotkeys. | ctrl + shift
+hotkeyPrefix         | Starting keyboard sequence for all hotkeys. | alt + shift
 menuHotkeyUrl | URL to *GET* persisted shortcuts from and *PUT* to save | *None*
 
 Note: menuHotkeyUrl will *PUT* to *menuHotkeyUrl/{menuItemName}*
