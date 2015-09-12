@@ -147,7 +147,7 @@
       ok(true, 'Home was clicked by hotkey');
       done();
     });
-    triggerHotKeyBinding('keydown', 'ctrl+shift+h', 72, ['ctrl', 'shift']);
+    triggerHotKeyBinding('keydown', 'alt+shift+h', 72, ['alt', 'shift']);
   });
 
   QUnit.test('should be able to update existing shortcut which unbinds hotkey', function(assert) {
@@ -158,7 +158,7 @@
       $('.add-shortcut-btn').click();
       setTimeout(function () {
         equal($('#nav').data('hotkeys').shortcuts["Home"], "o");
-        triggerHotKeyBinding('keydown', 'ctrl+shift+h', 72, ['ctrl', 'shift']);
+        triggerHotKeyBinding('keydown', 'alt+shift+h', 72, ['alt', 'shift']);
         setTimeout(function () {
           done();
         });

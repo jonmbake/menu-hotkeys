@@ -16,7 +16,7 @@
    * @type {Object}
    */
   var defaultOptions = {
-    hotkeyPrefix: 'ctrl+shift'
+    hotkeyPrefix: 'alt+shift'
   };
   /**
    * A simple jQuery Event Dispatcher (Event Bus).  Any registered event will have every registered element notified
