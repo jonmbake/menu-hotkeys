@@ -204,22 +204,13 @@
      * Add menu item click handlers.  On double click open the prompt; on single click navigate to the page.
      */
     addClickHandler: function () {
-      var clicks = 0;
       this.$a.on('click', function (e) {
-        e.preventDefault();
-        e.stopPropagation();
-        clicks++;
-        if (clicks === 1) {
-          setTimeout(function() {
-            if (clicks === 1) {
-              window.location = this.$a.attr('href');
-            } else {
-              //lazily construct prompt
-              this.hotkeyPrompt = this.hotkeyPrompt || new HotkeyPrompt(this);
-              this.hotkeyPrompt.open();
-            }
-            clicks = 0;
-          }.bind(this), 300);
+        if (e.shiftKey) {
+          e.preventDefault();
+          e.stopPropagation();
+          //lazily construct prompt
+          this.hotkeyPrompt = this.hotkeyPrompt || new HotkeyPrompt(this);
+          this.hotkeyPrompt.open();
         }
       }.bind(this));
     },

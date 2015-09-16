@@ -1,3 +1,3 @@
-/*! Menu Hotkeys - v0.1.0 - 2015-09-12
+/*! Menu Hotkeys - v0.1.0 - 2015-09-15
 * https://github.com/jonmbake/menu-hotkeys
 * Copyright (c) 2015 Jon Bake; Licensed MIT */

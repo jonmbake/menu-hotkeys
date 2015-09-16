@@ -6,7 +6,7 @@ Quickly add hotkeys (keyboard shortcuts) to HTML menu items.
 
 # How it Works
 
-## 1) Double Click a Menu Item to Add a Hotkey
+## 1) Hold Down Shift and Click a Menu Item to Add a Hotkey
 
 ![Hotkey Prompt](https://raw.githubusercontent.com/jonmbake/screenshots/master/menu-hotkeys/hotkeys_dbl_click.png)
 
@@ -59,6 +59,8 @@ hotkeyPrefix         | Starting keyboard sequence for all hotkeys. | alt + shift
 menuHotkeyUrl | URL to *GET* persisted shortcuts from and *PUT* to save | *None*
 
 Note: menuHotkeyUrl will *PUT* to *menuHotkeyUrl/{menuItemName}*
+
+**Note on choosing a hotkeyPrefix**: Make sure to pick some that is not going to conflict with OS or browser shortcuts!
 
 Example:
 
