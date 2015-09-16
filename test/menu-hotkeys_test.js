@@ -48,6 +48,12 @@
     $(document).trigger(event);
   };
 
+  var shiftClick = function ($a) {
+    var e = $.Event("click");
+    e.shiftKey = true;
+    $a.trigger(e);
+  };
+
   module('jQuery#menuHotkeys base functionality', {
     // This will run before each test in this module.
     setup: function(assert) {
@@ -81,7 +87,7 @@
       ok(true, 'Popover is hiden');
       done();
     });
-    $('#home').click().click();
+    shiftClick($('#home'));
   });
 
   QUnit.test('should add indicator to menu item with shortcut', function() {
@@ -99,7 +105,7 @@
         done();
       });
     });
-    $('#foo').click().click();
+    shiftClick($('#foo'));
   });
 
   QUnit.test('should display error when submitting hotkey value that already exists', function(assert) {
@@ -112,7 +118,7 @@
         done();
       });
     });
-    $('#foo').click().click();
+    shiftClick($('#foo'));
   });
 
   QUnit.test('should display error when shortcut is longer than one char', function(assert) {
@@ -125,7 +131,7 @@
         done();
       });
     });
-    $('#foo').click().click();
+    shiftClick($('#foo'));
   });
 
   QUnit.test('should be able to add a shortcut (hotkey) by entering text into input', function(assert) {
@@ -138,7 +144,7 @@
         done();
       });
     });
-    $('#foo').click().click();
+    shiftClick($('#foo'));
   });
 
   QUnit.test('should bind hotkey to document', function(assert) {
@@ -164,7 +170,7 @@
         });
       });
     });
-    $('#home').click().click();
+    shiftClick($('#home'));
     $('#home').one('click', function () {
       ok(false, 'Home was clicked with old hotkey');
     });
