@@ -58,10 +58,13 @@
     // This will run before each test in this module.
     setup: function(assert) {
       var done = assert.async();
-      this.$nav = $('#nav');
+      var $n = this.$nav = $('#nav');
       this.$homeMenuItem = $('#home');
       window.localStorage.setItem('MENU_SHORTCUTS', '{"Home": "h"}');
-      this.$nav.on('menu-hotkeys-loaded', done);
+      $n.on('menu-hotkeys-loaded', function () {
+        $n.off('menu-hotkeys-loaded');
+        done();
+      });
       this.$nav.menuHotkeys();
     },
     teardown: function() {
@@ -174,6 +177,19 @@
     $('#home').one('click', function () {
       ok(false, 'Home was clicked with old hotkey');
     });
+  });
+
+  QUnit.test('should be able to re-initialize hotkey menu', function(assert) {
+    var done = assert.async();
+    $('#nav').append('<a href="#new" id="new">New Item</a>');
+    $('#new').on('menu-hotkey-input-open', function () {
+      ok(true, 'New menu item prompt opened');
+      done();
+    });
+    this.$nav.on('menu-hotkeys-loaded', function () {
+      shiftClick($('#new'));
+    });
+    this.$nav.menuHotkeys();
   });
 
   module('jQuery#menuHotkeys non-default options');

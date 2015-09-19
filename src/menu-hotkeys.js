@@ -58,11 +58,15 @@
     /**
      * Unregister an element from an event.
      * @param  {jQuqery Object}   $element - to unregister from the event
-     * @param  {String} or {Array}   events  - or single event to unregister the $element from
+     * @param  {String} or {Array}   events or single event to unregister the $element from.  If no events specified, remove element from every registerd event.
      * @return {undefined}
      */
     unregister: function ($element, events) {
-      events = Array.isArray(events) ? events : [events];
+      if (events) {
+        events = Array.isArray(events) ? events : [events];
+      } else {
+        events = Object.keys(this.registered);
+      }
       events.forEach(function (event) {
         var reg = this.registered[event];
         if (reg) {
@@ -145,10 +149,10 @@
       if (menuItem.hotkey) {
         $('.hotkey-input').val(menuItem.hotkey);
       }
-      $('.cancel-shortcut-btn').click(function () {
+      $('.cancel-shortcut-btn').on('click', function () {
         menuItem.hotkeyDispatcher.trigger('menu-hotkey-input-close');
       });
-      $('.add-shortcut-btn').click(function () {
+      $('.add-shortcut-btn').on('click', function () {
         var hotkey = $('.hotkey-input').val();
         if (this.validateHotkeyInput(hotkey)) {
           menuItem.hotkeyDispatcher.trigger('update-menu-shortcut', {name: menuItem.name, hotkey: hotkey});
@@ -196,23 +200,31 @@
       }
     }.bind(this));
     this.updateHotkey(hotkey);
-    this.addClickHandler();
+    this.boundClickHandler = this.clickHandler.bind(this);
+    this.$a.on('click', this.boundClickHandler);
   };
 
   $.extend(MenuItem.prototype, {
+    destroy: function () {
+      this.hotkeyDispatcher.trigger('menu-hotkey-input-close');
+      this.removeHotkeyIndicator();
+      this.hotkeyDispatcher.unregister(this.$a);
+      if (this.hotkey) {
+        $(document).unbind('keydown', this.linkClicker);
+      }
+      this.$a.off('click', this.boundClickHandler);
+    },
     /**
-     * Add menu item click handlers.  On double click open the prompt; on single click navigate to the page.
+     * Add menu item click handlers.  If shift key is down, open the prompt; otherwise preform default click action.
      */
-    addClickHandler: function () {
-      this.$a.on('click', function (e) {
-        if (e.shiftKey) {
-          e.preventDefault();
-          e.stopPropagation();
-          //lazily construct prompt
-          this.hotkeyPrompt = this.hotkeyPrompt || new HotkeyPrompt(this);
-          this.hotkeyPrompt.open();
-        }
-      }.bind(this));
+    clickHandler: function (e) {
+      if (e.shiftKey) {
+        e.preventDefault();
+        e.stopImmediatePropagation();
+        //lazily construct prompt
+        this.hotkeyPrompt = this.hotkeyPrompt || new HotkeyPrompt(this);
+        this.hotkeyPrompt.open();
+      }
     },
     /**
      * Update hotkey with new value.
@@ -228,11 +240,17 @@
         $(document).unbind('keydown', this.linkClicker);
       }
       this.hotkey = hotkey;
-      this.$a.find('sup').remove();
-      this.$a.append($('<sup>').text(hotkey));
+      this.addHotkeyIndicator(hotkey);
       var keyCombination = this.hotkeyPrefix + '+' + hotkey;
       
       $(document).bind('keydown', keyCombination, this.linkClicker);
+    },
+    addHotkeyIndicator: function (hotkey) {
+      this.removeHotkeyIndicator();
+      this.$a.append($('<sup>').text(hotkey));
+    },
+    removeHotkeyIndicator: function () {
+      this.$a.find('sup').remove();
     }
   });
   /**
@@ -241,32 +259,44 @@
    * @param {object} options - options to plugin @see defaultOptions above
    */
   var HotkeyMenu = function ($menu, options) {
-    $.extend(this, defaultOptions, options);
-    this.$menu = $menu;
-
-    var items = this.menuItems = [];
-    var hotkeyPrefix = this.hotkeyPrefix;
-    var dispatcher = this.dispatcher = new Dispatcher();
-    dispatcher.register($menu, 'update-menu-shortcut', this.saveShortcut.bind(this));
-    dispatcher.register($menu, ['menu-hotkey-input-open', 'menu-hotkey-input-close', 'menu-hotkey-input-error']);
-
-    this.loadSavedShortcuts().then(function (shortcuts) {
-      $menu.find('a').each(function () {
-        var $a = $(this);
-        for (var scName in shortcuts) {
-          if (scName === $a.text()) {
-            items.push(new MenuItem($a, dispatcher, hotkeyPrefix, shortcuts[scName]));
-            return;
-          }
-        }
-        items.push(new MenuItem($a, dispatcher, hotkeyPrefix));
-      });
-      $menu.trigger('menu-hotkeys-loaded', shortcuts);
-    });
+    $.extend(this, {$menu: $menu}, defaultOptions, options);
+    this.init();
   };
 
   $.extend(HotkeyMenu.prototype, {
     LOCAL_STORAGE_ITEM_NAME: 'MENU_SHORTCUTS',
+    /**
+     * Initialize the hotkey menu.  This can also be used to re-initialize when the base menu changes.
+     * @return {undefined}
+     */
+    init: function () {
+      var $menu = this.$menu;
+      //if re-initializing, destroy any existing menu items.
+      if (this.menuItems) {
+        this.menuItems.forEach(function (mi) {
+          mi.destroy();
+        });
+      }
+      var items = this.menuItems = [];
+      var hotkeyPrefix = this.hotkeyPrefix;
+      var dispatcher = this.dispatcher = new Dispatcher();
+      dispatcher.register($menu, 'update-menu-shortcut', this.saveShortcut.bind(this));
+      dispatcher.register($menu, ['menu-hotkey-input-open', 'menu-hotkey-input-close', 'menu-hotkey-input-error']);
+
+      this.loadSavedShortcuts().then(function (shortcuts) {
+        $menu.find('a').each(function () {
+          var $a = $(this);
+          for (var scName in shortcuts) {
+            if (scName === $a.text()) {
+              items.push(new MenuItem($a, dispatcher, hotkeyPrefix, shortcuts[scName]));
+              return;
+            }
+          }
+          items.push(new MenuItem($a, dispatcher, hotkeyPrefix));
+        });
+        $menu.trigger('menu-hotkeys-loaded', shortcuts);
+      });
+    },
     /**
      * Save shortcut either in local storage or by PUTing to url if menuHotkeyUrl option is supplied.
      * @param  {Object} shortcut - shortcut object with name and hotkey properties
@@ -349,8 +379,13 @@
      * @return {[type]}         [description]
      */
     init: function (options) {
-      var rt = new HotkeyMenu(this, options);
-      this.data('hotkeys', rt);
+      var d = this.data('hotkeys');
+      if (d) {
+        d.init();
+      } else {
+        d = new HotkeyMenu(this, options);
+        this.data('hotkeys', d);
+      }
       return this;
     }
   };
