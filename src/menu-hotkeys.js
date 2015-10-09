@@ -145,6 +145,7 @@
           <button class="unconfirm btn btn-xs cancel-shortcut-btn">Cancel</button>',
       });
       $a.popover('show');
+      $('.popover-title').css({'white-space': 'nowrap'});
 
       if (menuItem.hotkey) {
         $('.hotkey-input').val(menuItem.hotkey);
