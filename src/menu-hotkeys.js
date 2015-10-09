@@ -16,7 +16,7 @@
    * @type {Object}
    */
   var defaultOptions = {
-    hotkeyPrefix: 'alt+shift'
+    hotkeyPrefix: 'alt'
   };
   /**
    * A simple jQuery Event Dispatcher (Event Bus).  Any registered event will have every registered element notified
@@ -218,7 +218,7 @@
      * Add menu item click handlers.  If shift key is down, open the prompt; otherwise preform default click action.
      */
     clickHandler: function (e) {
-      if (e.shiftKey) {
+      if (e.altKey) {
         e.preventDefault();
         e.stopImmediatePropagation();
         //lazily construct prompt

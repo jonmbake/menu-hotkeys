@@ -48,9 +48,9 @@
     $(document).trigger(event);
   };
 
-  var shiftClick = function ($a) {
+  var altClick = function ($a) {
     var e = $.Event("click");
-    e.shiftKey = true;
+    e.altKey = true;
     $a.trigger(e);
   };
 
@@ -90,7 +90,7 @@
       ok(true, 'Popover is hiden');
       done();
     });
-    shiftClick($('#home'));
+    altClick($('#home'));
   });
 
   QUnit.test('should add indicator to menu item with shortcut', function() {
@@ -108,7 +108,7 @@
         done();
       });
     });
-    shiftClick($('#foo'));
+    altClick($('#foo'));
   });
 
   QUnit.test('should display error when submitting hotkey value that already exists', function(assert) {
@@ -121,7 +121,7 @@
         done();
       });
     });
-    shiftClick($('#foo'));
+    altClick($('#foo'));
   });
 
   QUnit.test('should display error when shortcut is longer than one char', function(assert) {
@@ -134,7 +134,7 @@
         done();
       });
     });
-    shiftClick($('#foo'));
+    altClick($('#foo'));
   });
 
   QUnit.test('should be able to add a shortcut (hotkey) by entering text into input', function(assert) {
@@ -147,7 +147,7 @@
         done();
       });
     });
-    shiftClick($('#foo'));
+    altClick($('#foo'));
   });
 
   QUnit.test('should bind hotkey to document', function(assert) {
@@ -156,7 +156,7 @@
       ok(true, 'Home was clicked by hotkey');
       done();
     });
-    triggerHotKeyBinding('keydown', 'alt+shift+h', 72, ['alt', 'shift']);
+    triggerHotKeyBinding('keydown', 'alt+h', 72, ['alt']);
   });
 
   QUnit.test('should be able to update existing shortcut which unbinds hotkey', function(assert) {
@@ -167,13 +167,13 @@
       $('.add-shortcut-btn').click();
       setTimeout(function () {
         equal($('#nav').data('hotkeys').shortcuts["Home"], "o");
-        triggerHotKeyBinding('keydown', 'alt+shift+h', 72, ['alt', 'shift']);
+        triggerHotKeyBinding('keydown', 'alt+h', 72, ['alt']);
         setTimeout(function () {
           done();
         });
       });
     });
-    shiftClick($('#home'));
+    altClick($('#home'));
     $('#home').one('click', function () {
       ok(false, 'Home was clicked with old hotkey');
     });
@@ -187,7 +187,7 @@
       done();
     });
     this.$nav.on('menu-hotkeys-loaded', function () {
-      shiftClick($('#new'));
+      altClick($('#new'));
     });
     this.$nav.menuHotkeys();
   });
