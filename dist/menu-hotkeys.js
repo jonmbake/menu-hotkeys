@@ -1,13 +1,6 @@
-/*
- * menu-hotkeys
- * A jQuery Plugin to allow users to easily create hotkeys (keyboard shortcuts) to HTML menu items.
- * https://github.com/jonmbake/menu-hotkeys
- *
- * Copyright (c) 2015 Jon Bake
- * Dependent on jQuery Hotkeys Plugin (Copyright 2010, John Resig)
- * Licensed under the MIT license.
- */
-
+/*! Menu Hotkeys - v0.1.0 - 2015-10-10
+* https://github.com/jonmbake/menu-hotkeys
+* Copyright (c) 2015 Jon Bake; Licensed MIT */
 (function($) {
   var jQuery = $;
   /**

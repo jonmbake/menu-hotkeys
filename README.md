@@ -4,6 +4,12 @@ Quickly add hotkeys (keyboard shortcuts) to HTML menu items.
 
 **[Demo](http://jonmbake.github.io/menu-hotkeys/demo.html)**
 
+# Getting Started
+Download the [production version][min] or the [development version][max].
+
+[min]: https://raw.github.com/jonmbake/menu-hotkeys/master/dist/menu-hotkeys.min.js
+[max]: https://raw.github.com/jonmbake/menu-hotkeys/master/dist/menu-hotkeys.js
+
 # How it Works
 
 ## 1) Hold Down Alt and Click a Menu Item to Add a Hotkey
