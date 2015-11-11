@@ -1,7 +1,14 @@
-/*! Menu Hotkeys - v0.1.0 - 2015-10-10
+/*! Menu Hotkeys - v0.1.0 - 2015-11-10
 * https://github.com/jonmbake/menu-hotkeys
 * Copyright (c) 2015 Jon Bake; Licensed MIT */
-(function($) {
+/* globals define */
+(function(root, factory) {
+  if (typeof define === 'function' && define.amd) {
+    define(['jquery'], factory);
+  } else {
+    factory(root.jQuery);
+  }
+}(this, function($) {
   var jQuery = $;
   /**
    * Default initialization options.
@@ -133,10 +140,10 @@
         placement: 'bottom',
         html: true,
         title: 'Add a Hotkey',
-        content: '<div class="alert alert-danger hotkey-error-msg" style="margin-bottom: 10px; display: none; font-size: 12px;"></div><div class="input-group input-group-sm" style="margin-bottom: 10px;"><span class="input-group-addon" id="sizing-addon3">' + this.menuItem.hotkeyPrefix + '+</span>\
-          <input type="text" class="input-sm hotkey-input" size="1" maxlength="1"></div>\
-          <button class="confirm btn btn-xs btn-danger add-shortcut-btn">Add</button>\
-          <button class="unconfirm btn btn-xs cancel-shortcut-btn">Cancel</button>',
+        content: '<div class="alert alert-danger hotkey-error-msg" style="margin-bottom: 10px; display: none; font-size: 12px;"></div><div class="input-group input-group-sm input-prepend input-append" style="margin-bottom: 10px;"><span class="input-group-addon add-on" id="sizing-addon3">' + this.menuItem.hotkeyPrefix + '+</span>\
+          <input type="text" class="input-sm input-small hotkey-input" size="1" maxlength="1"></div>\
+          <button class="confirm btn btn-xs btn-mini btn-danger add-shortcut-btn">Add</button>\
+          <button class="unconfirm btn btn-xs btn-mini cancel-shortcut-btn">Cancel</button>',
       });
       $a.popover('show');
       $('.popover-title').css({'white-space': 'nowrap'});
@@ -187,7 +194,12 @@
   var MenuItem = function ($a, hotkeyDispatcher, hotkeyPrefix, hotkey) {
     $.extend(this, { $a: $a, hotkeyDispatcher: hotkeyDispatcher, hotkeyPrefix: hotkeyPrefix});
     this.name = $a.text();
-    this.linkClicker = function () { $a.click(); };
+    this.linkClicker = function () {
+      var a = $a[0];
+      if (a) {
+        a.click();
+      }
+    };
     hotkeyDispatcher.register($a, 'menu-hotkey-updated', function (shortcut) {
       if (shortcut.name === this.name) {
         this.updateHotkey(shortcut.hotkey);
@@ -213,7 +225,7 @@
      * Add menu item click handlers.  If shift key is down, open the prompt; otherwise preform default click action.
      */
     clickHandler: function (e) {
-      if (e.altKey) {
+      if (e.which === 3) {
         e.preventDefault();
         e.stopImmediatePropagation();
         //lazily construct prompt
@@ -514,9 +526,9 @@
     textInputTypes: /textarea|input|select/i,
 
     options: {
-      filterInputAcceptingElements: true,
-      filterTextInputs: true,
-      filterContentEditable: true
+      filterInputAcceptingElements: false,
+      filterTextInputs: false,
+      filterContentEditable: false
     }
   };
 
@@ -593,4 +605,4 @@
       add: keyHandler
     };
   });
-}(jQuery));
+}));

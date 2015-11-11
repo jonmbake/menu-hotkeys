@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <title>Menu Shortcuts Test Suite</title>
-  <!-- Polyfill - Version 1.X of Phantom does not have Function.prototype.bind -->
+  <!-- Polyfills - Version 1.X of Phantom does not have Function.prototype.bind or HTMLElement.prototype.click -->
   <script>
   if (!Function.prototype.bind) {
     Function.prototype.bind = function(oThis) {
@@ -30,6 +30,20 @@
       fBound.prototype = new fNOP();
 
       return fBound;
+    };
+  }
+  if (!HTMLElement.prototype.click) {
+    HTMLElement.prototype.click = function() {
+      var ev = document.createEvent('MouseEvent');
+      ev.initMouseEvent(
+          'click',
+          /*bubble*/true, /*cancelable*/true,
+          window, null,
+          0, 0, 0, 0, /*coordinates*/
+          false, false, false, false, /*modifier keys*/
+          0/*button=left*/, null
+      );
+      this.dispatchEvent(ev);
     };
   }
   </script>

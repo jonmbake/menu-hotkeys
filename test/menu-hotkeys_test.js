@@ -48,9 +48,9 @@
     $(document).trigger(event);
   };
 
-  var altClick = function ($a) {
+  var rightClick = function ($a) {
     var e = $.Event("click");
-    e.altKey = true;
+    e.which = 3;
     $a.trigger(e);
   };
 
@@ -78,7 +78,7 @@
     }
   });
 
-  QUnit.test('should show popover when double clicking link, hide when clicking cancel', function(assert) {
+  QUnit.test('should show popover when right clicking link, hide when clicking cancel', function(assert) {
     var done = assert.async();
     $('#home').on('inserted.bs.popover', function () {
       ok(true, 'Popover is showing');
@@ -90,7 +90,7 @@
       ok(true, 'Popover is hiden');
       done();
     });
-    altClick($('#home'));
+    rightClick($('#home'));
   });
 
   QUnit.test('should add indicator to menu item with shortcut', function() {
@@ -108,7 +108,7 @@
         done();
       });
     });
-    altClick($('#foo'));
+    rightClick($('#foo'));
   });
 
   QUnit.test('should display error when submitting hotkey value that already exists', function(assert) {
@@ -121,7 +121,7 @@
         done();
       });
     });
-    altClick($('#foo'));
+    rightClick($('#foo'));
   });
 
   QUnit.test('should display error when shortcut is longer than one char', function(assert) {
@@ -134,7 +134,7 @@
         done();
       });
     });
-    altClick($('#foo'));
+    rightClick($('#foo'));
   });
 
   QUnit.test('should be able to add a shortcut (hotkey) by entering text into input', function(assert) {
@@ -147,7 +147,7 @@
         done();
       });
     });
-    altClick($('#foo'));
+    rightClick($('#foo'));
   });
 
   QUnit.test('should bind hotkey to document', function(assert) {
@@ -173,7 +173,7 @@
         });
       });
     });
-    altClick($('#home'));
+    rightClick($('#home'));
     $('#home').one('click', function () {
       ok(false, 'Home was clicked with old hotkey');
     });
@@ -187,12 +187,18 @@
       done();
     });
     this.$nav.on('menu-hotkeys-loaded', function () {
-      altClick($('#new'));
+      rightClick($('#new'));
     });
     this.$nav.menuHotkeys();
   });
 
-  module('jQuery#menuHotkeys non-default options');
+  module('jQuery#menuHotkeys non-default options', {
+    teardown: function() {
+      $(document).off();
+      $('#nav').off();
+      $('#nav a').off();
+    }
+  });
 
   QUnit.test('should make a request to get saved menu items', function(assert) {
     var done = assert.async();
