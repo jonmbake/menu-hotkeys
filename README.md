@@ -12,7 +12,7 @@ Download the [production version][min] or the [development version][max].
 
 # How it Works
 
-## 1) Right Click a Menu Item to Add a Hotkey
+## 1) Hold Down Alt and Click a Menu Item to Add a Hotkey
 
 ![Hotkey Prompt](https://raw.githubusercontent.com/jonmbake/screenshots/master/menu-hotkeys/hotkeys_dbl_click.png)
 

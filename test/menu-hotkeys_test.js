@@ -48,9 +48,9 @@
     $(document).trigger(event);
   };
 
-  var rightClick = function ($a) {
+  var altClick = function ($a) {
     var e = $.Event("click");
-    e.which = 3;
+    e.altKey = true;
     $a.trigger(e);
   };
 
@@ -78,7 +78,7 @@
     }
   });
 
-  QUnit.test('should show popover when right clicking link, hide when clicking cancel', function(assert) {
+  QUnit.test('should show popover on alt-click, hide when clicking cancel', function(assert) {
     var done = assert.async();
     $('#home').on('inserted.bs.popover', function () {
       ok(true, 'Popover is showing');
@@ -90,7 +90,7 @@
       ok(true, 'Popover is hiden');
       done();
     });
-    rightClick($('#home'));
+    altClick($('#home'));
   });
 
   QUnit.test('should add indicator to menu item with shortcut', function() {
@@ -108,7 +108,7 @@
         done();
       });
     });
-    rightClick($('#foo'));
+    altClick($('#foo'));
   });
 
   QUnit.test('should display error when submitting hotkey value that already exists', function(assert) {
@@ -121,7 +121,7 @@
         done();
       });
     });
-    rightClick($('#foo'));
+    altClick($('#foo'));
   });
 
   QUnit.test('should display error when shortcut is longer than one char', function(assert) {
@@ -134,7 +134,7 @@
         done();
       });
     });
-    rightClick($('#foo'));
+    altClick($('#foo'));
   });
 
   QUnit.test('should be able to add a shortcut (hotkey) by entering text into input', function(assert) {
@@ -147,7 +147,7 @@
         done();
       });
     });
-    rightClick($('#foo'));
+    altClick($('#foo'));
   });
 
   QUnit.test('should bind hotkey to document', function(assert) {
@@ -173,7 +173,7 @@
         });
       });
     });
-    rightClick($('#home'));
+    altClick($('#home'));
     $('#home').one('click', function () {
       ok(false, 'Home was clicked with old hotkey');
     });
@@ -187,7 +187,7 @@
       done();
     });
     this.$nav.on('menu-hotkeys-loaded', function () {
-      rightClick($('#new'));
+      altClick($('#new'));
     });
     this.$nav.menuHotkeys();
   });

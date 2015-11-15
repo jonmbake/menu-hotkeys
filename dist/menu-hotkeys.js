@@ -1,4 +1,4 @@
-/*! Menu Hotkeys - v0.1.0 - 2015-11-10
+/*! Menu Hotkeys - v0.1.0 - 2015-11-14
 * https://github.com/jonmbake/menu-hotkeys
 * Copyright (c) 2015 Jon Bake; Licensed MIT */
 /* globals define */
@@ -225,7 +225,7 @@
      * Add menu item click handlers.  If shift key is down, open the prompt; otherwise preform default click action.
      */
     clickHandler: function (e) {
-      if (e.which === 3) {
+      if (e.altKey) {
         e.preventDefault();
         e.stopImmediatePropagation();
         //lazily construct prompt
