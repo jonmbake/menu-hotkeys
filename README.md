@@ -48,7 +48,6 @@ Download the [production version][min] or the [development version][max].
 In your web page:
 
 ```html
-<script src="dist/menu-hotkeys.min.js"></script>
 <script src="jquery.js"></script>
 <script src="bootstrap-popover.js"></script>
 <script src="dist/menu-hotkeys.min.js"></script>
