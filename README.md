@@ -92,7 +92,13 @@ menu-hotkey-input-close | When Hotkey Input Prompt closes. | *None*
 menu-hotkey-input-error | When Hotkey Input Prompt has an input error. | error menu-hotkey-updated | When hotkey is updated | Object with name and hotkey properties
 
 
+# Version History
+
+Version             | Features                                    |
+--------------------| ------------------------------------------- |
+[0.2.0](https://github.com/jonmbake/menu-hotkeys/tree/0.2.0)               | Added abiltiy to remove shortcuts           |
+[0.1.0](https://github.com/jonmbake/menu-hotkeys/tree/0.1.0) | Init                                        |
+
 ## To Do
 
 - Should only attach to first link under nav
-- Add ability to delete shortcut

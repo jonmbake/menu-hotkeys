@@ -145,17 +145,25 @@
         animation: false,
         placement: 'bottom',
         html: true,
-        title: 'Add a Hotkey',
+        title: (menuItem.hotkey ? 'Update' : 'Add') + ' Hotkey',
         content: '<div class="alert alert-danger hotkey-error-msg" style="margin-bottom: 10px; display: none; font-size: 12px;"></div><div class="input-group input-group-sm input-prepend input-append" style="margin-bottom: 10px;"><span class="input-group-addon add-on" id="sizing-addon3">' + this.menuItem.hotkeyPrefix + '+</span>\
           <input type="text" class="input-sm input-small hotkey-input" size="1" maxlength="1"></div>\
-          <button class="confirm btn btn-xs btn-mini btn-danger add-shortcut-btn">Add</button>\
-          <button class="unconfirm btn btn-xs btn-mini cancel-shortcut-btn">Cancel</button>',
+          <div style="display: inline-flex; margin-bottom: 10px">\
+              <button class="btn btn-xs btn-mini btn-success add-shortcut-btn">Add</button>\
+              <button class="btn btn-xs btn-mini btn-danger remove-shortcut-btn" style="margin-left: 5px">Remove</button>\
+          </div>\
+          <button class="btn btn-xs btn-mini cancel-shortcut-btn">Cancel</button>'
       });
       $a.popover('show');
       $('.popover-title').css({'white-space': 'nowrap'});
 
       if (menuItem.hotkey) {
         $('.hotkey-input').val(menuItem.hotkey);
+        $('.remove-shortcut-btn').on('click', function () {
+          menuItem.hotkeyDispatcher.trigger('update-menu-shortcut', {name: menuItem.name, hotkey: null});
+        });
+      } else {
+        $('.remove-shortcut-btn').hide();
       }
       $('.cancel-shortcut-btn').on('click', function () {
         menuItem.hotkeyDispatcher.trigger('menu-hotkey-input-close');
@@ -246,21 +254,23 @@
      * @return {undefined}
      */
     updateHotkey: function (hotkey) {
-      if (!hotkey) {
-        return;
-      }
       if (this.hotkey) {
         $(document).unbind('keydown', this.linkClicker);
       }
       this.hotkey = hotkey;
       this.addHotkeyIndicator(hotkey);
+      if (!hotkey) {
+        return;
+      }
       var keyCombination = this.hotkeyPrefix + '+' + hotkey;
       
       $(document).bind('keydown', keyCombination, this.linkClicker);
     },
     addHotkeyIndicator: function (hotkey) {
       this.removeHotkeyIndicator();
-      this.$a.append($('<sup>').text(hotkey));
+      if (hotkey) {
+        this.$a.append($('<sup>').text(hotkey));
+      }
     },
     removeHotkeyIndicator: function () {
       this.$a.find('sup').remove();
@@ -321,19 +331,22 @@
         this.dispatcher.trigger('menu-hotkey-input-error', 'Shortcut already exists for ' +  existing + '.');
         return;
       }
+      if (shortcut.hotkey) {
+        this.shortcuts[shortcut.name] = shortcut.hotkey;
+      } else {
+        delete this.shortcuts[shortcut.name];
+      }
       if (this.menuHotkeyUrl) {
          $.ajax({
           dataType: "json",
-          method: "PUT",
+          method: shortcut.hotkey ? "PUT" : "DELETE",
           url: this.menuHotkeyUrl + '/' + encodeURI(shortcut.name),
           data: shortcut,
           success: function () {
-            this.shortcuts[shortcut.name] = shortcut.hotkey;
             this.dispatcher.trigger('menu-hotkey-updated', shortcut);
           }.bind(this)
         });
       } else {
-        this.shortcuts[shortcut.name] = shortcut.hotkey;
         window.localStorage.setItem(this.LOCAL_STORAGE_ITEM_NAME, JSON.stringify(this.shortcuts));
         this.dispatcher.trigger('menu-hotkey-updated', shortcut);
       }

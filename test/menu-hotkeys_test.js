@@ -179,6 +179,25 @@
     });
   });
 
+  QUnit.test('should be able to remove existing shortcut which unbinds hotkey', function(assert) {
+    var done = assert.async();
+    $('#home').on('menu-hotkey-input-open', function () {
+      equal($('.hotkey-input').val(), 'h');
+      $('.remove-shortcut-btn').click();
+      setTimeout(function () {
+        equal($('#nav').data('hotkeys').shortcuts["Home"], undefined);
+        triggerHotKeyBinding('keydown', 'alt+h', 72, ['alt']);
+        setTimeout(function () {
+          done();
+        });
+      });
+    });
+    altClick($('#home'));
+    $('#home').one('click', function () {
+      ok(false, 'Home was clicked with old hotkey');
+    });
+  });
+
   QUnit.test('should be able to re-initialize hotkey menu', function(assert) {
     var done = assert.async();
     $('#nav').append('<a href="#new" id="new">New Item</a>');
